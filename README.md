@@ -5,7 +5,11 @@ Titanium is a thin Clojure graph library built on top of [Titan](http://thinkaur
 
 ## Project Goals
 
- * 
+ * Make good parts of Titan easier to use from Clojure
+ * Roughly match [Neocons](http://clojureneo4j.info) in terms of functionality
+ * Be well documented
+ * Be well tested
+ * Add additional features and DSL bits for convenience
 
 
 ## Community
