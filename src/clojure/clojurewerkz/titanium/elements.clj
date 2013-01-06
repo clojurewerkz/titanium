@@ -1,4 +1,4 @@
-(ns clojurewerkz.titanium.element
+(ns clojurewerkz.titanium.elements
   (:refer-clojure :exclude [assoc! dissoc!])
   (:import [com.tinkerpop.blueprints Element Vertex]))
 

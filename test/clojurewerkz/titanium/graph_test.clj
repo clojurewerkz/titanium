@@ -1,6 +1,6 @@
 (ns clojurewerkz.titanium.graph-test
-  (:require [clojurewerkz.titanium.graph   :as tg]
-            [clojurewerkz.titanium.element :as te])
+  (:require [clojurewerkz.titanium.graph    :as tg]
+            [clojurewerkz.titanium.elements :as te])
   (:use clojure.test)
   (:import java.io.File))
 
