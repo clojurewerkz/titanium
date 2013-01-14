@@ -1,6 +1,6 @@
 (ns clojurewerkz.titanium.graph
   (:import [com.thinkaurelius.titan.core TitanFactory TitanGraph]
-           [com.tinkerpop.blueprints Graph Vertex]))
+           [com.tinkerpop.blueprints Graph Vertex Edge]))
 
 
 ;;
@@ -45,3 +45,8 @@
     (doseq [[k v] m]
       (.setProperty vtx (name k) v))
     vtx))
+
+(defn ^com.tinkerpop.blueprints.Edge
+  add-edge
+  [^Graph g ^Edge edge-a ^Edge edge-b ^String label]
+  (.addEdge g nil edge-a edge-b label))

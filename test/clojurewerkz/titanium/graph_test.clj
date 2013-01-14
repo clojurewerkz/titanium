@@ -1,6 +1,7 @@
 (ns clojurewerkz.titanium.graph-test
   (:require [clojurewerkz.titanium.graph    :as tg]
-            [clojurewerkz.titanium.elements :as te])
+            [clojurewerkz.titanium.elements :as te]
+            [clojurewerkz.titanium.edges    :as ted])
   (:use clojure.test)
   (:import java.io.File))
 
@@ -56,3 +57,18 @@
         _  (te/dissoc! v "lines")
         m' (te/properties-of v)]
     (is (= {"station" "Boston Manor"} m'))))
+
+;;
+;; Edges
+;;
+
+(deftest test-getting-edge-head-and-tail
+  (let [g  (tg/open-in-memory-graph)
+        m1 {"station" "Boston Manor" "lines" #{"Piccadilly"}}
+        m2 {"station" "Northfields"  "lines" #{"Piccadilly"}}
+        v1 (tg/add-vertex g m1)
+        v2 (tg/add-vertex g m2)
+        e  (tg/add-edge g v1 v2 "links")]
+    (is (= "links" (ted/label-of e)))
+    (is (= v2 (ted/head-vertex e)))
+    (is (= v1 (ted/tail-vertex e)))))
