@@ -5,7 +5,7 @@
                  [com.thinkaurelius.titan/titan "0.2.0"]]
   :source-paths  ["src/clojure"]
   :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
-             :1.5 {:dependencies [[org.clojure/clojure "1.5.0-master-SNAPSHOT"]]}
+             :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC2"]]}
              :dev {:resource-paths ["test/resources"]
                    :plugins [[codox "0.6.1"]]
                    :codox {:sources ["src/clojure"]
