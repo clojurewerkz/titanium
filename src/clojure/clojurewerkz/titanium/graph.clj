@@ -1,6 +1,6 @@
 (ns clojurewerkz.titanium.graph
   (:import [com.thinkaurelius.titan.core TitanFactory TitanGraph]
-           [com.tinkerpop.blueprints Graph Vertex Edge]))
+           [com.tinkerpop.blueprints Graph KeyIndexableGraph Vertex Edge]))
 
 
 ;;
@@ -12,7 +12,7 @@
   (TitanFactory/openInMemoryGraph))
 
 (defprotocol TitaniumGraph
-  (open [input] "Opens a new graph")
+  (^KeyIndexableGraph open [input] "Opens a new graph")
   (open? [input] "Returns true if the graph is open (ready to be used)")
   (close [graph] "Shuts down the given graph"))
 
@@ -36,7 +36,9 @@
     (.shutdown g)))
 
 
-
+;;
+;; Populating
+;;
 
 (defn ^Vertex add-vertex
   "Adds a vertex to graph"
@@ -56,6 +58,25 @@
   [^Graph g ^Edge edge-a ^Edge edge-b ^String label]
   (.addEdge g nil edge-a edge-b label))
 
+
+;;
+;; Deleting
+;;
+
+(defn remove-vertex
+  "Removes a vertex from graph"
+  [^Graph g ^Vertex el]
+  (.removeVertex g el))
+
+(defn remove-edge
+  "Removes an edge from graph"
+  [^Graph g ^Edge el]
+  (.removeEdge g el))
+
+
+;;
+;; Querying
+;;
 
 (defn ^Vertex get-vertex
   "Looks up a vertex by id"
@@ -81,3 +102,24 @@
   ([^Graph g ^String k v]
      (.getEdges g k v)))
 
+
+
+;;
+;; Automatic Indexing
+;;
+
+(defn index-vertices-by-key!
+  [^KeyIndexableGraph g ^String k]
+  (.createKeyIndex g k com.tinkerpop.blueprints.Vertex))
+
+(defn deindex-vertices-by-key!
+  [^KeyIndexableGraph g ^String k]
+  (.dropKeyIndex g k com.tinkerpop.blueprints.Vertex))
+
+(defn index-edges-by-key!
+  [^KeyIndexableGraph g ^String k]
+  (.createKeyIndex g k com.tinkerpop.blueprints.Edge))
+
+(defn deindex-edges-by-key!
+  [^KeyIndexableGraph g ^String k]
+  (.dropKeyIndex g k com.tinkerpop.blueprints.Edge))
