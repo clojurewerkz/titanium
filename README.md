@@ -21,7 +21,10 @@ To subscribe for announcements of releases, important changes and so on, please 
 
 ## Project Maturity
 
-Titanium is *very* young.
+Titanium is *very* young and incomplete. We put it on GitHub to gather feedback. For now, please consider using
+a mature library such as [Neocons](http://clojureneo4j.info) instead.
+
+As the project matures, we will update this section.
 
 
 
