@@ -38,15 +38,46 @@
 
 
 
-(defn ^com.tinkerpop.blueprints.Vertex
-  add-vertex
-  [^Graph g m]
-  (let [vtx (.addVertex g nil)]
-    (doseq [[k v] m]
-      (.setProperty vtx (name k) v))
-    vtx))
+(defn ^Vertex add-vertex
+  "Adds a vertex to graph"
+  ([^Graph g m]
+     (let [vtx (.addVertex g nil)]
+       (doseq [[k v] m]
+         (.setProperty vtx (name k) v))
+       vtx))
+  ([^Graph g id m]
+     (let [vtx (.addVertex g id)]
+       (doseq [[k v] m]
+         (.setProperty vtx (name k) v))
+       vtx)))
 
-(defn ^com.tinkerpop.blueprints.Edge
-  add-edge
+(defn ^Edge add-edge
+  "Adds an edge to graph"
   [^Graph g ^Edge edge-a ^Edge edge-b ^String label]
   (.addEdge g nil edge-a edge-b label))
+
+
+(defn ^Vertex get-vertex
+  "Looks up a vertex by id"
+  [^Graph g id]
+  (.getVertex g id))
+
+(defn ^Iterable get-vertices
+  "Returns a sequence of vertices where given key has the provided value"
+  ([^Graph g]
+     (.getVertices g))
+  ([^Graph g ^String k v]
+     (.getVertices g k v)))
+
+(defn ^Edge get-edge
+  "Looks up an edge by id"
+  [^Graph g id]
+  (.getEdge g id))
+
+(defn ^Iterable get-edges
+  "Returns a sequence of edges where given key has the provided value"
+  ([^Graph g]
+     (.getEdges g))
+  ([^Graph g ^String k v]
+     (.getEdges g k v)))
+
