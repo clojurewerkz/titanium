@@ -4,13 +4,13 @@
                  [clojurewerkz/support          "0.10.0"]
                  [com.thinkaurelius.titan/titan "0.2.0"]]
   :source-paths  ["src/clojure"]
-  :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
+  :profiles {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC2"]]}
              :dev {:resource-paths ["test/resources"]
                    :plugins [[codox "0.6.1"]]
                    :codox {:sources ["src/clojure"]
                            :output-dir "doc/api"}}}
-  :aliases {"all" ["with-profile" "dev:dev,1.4:dev,1.5"]}
+  :aliases {"all" ["with-profile" "dev:dev,1.3:dev,1.5"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail}}
