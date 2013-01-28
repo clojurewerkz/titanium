@@ -49,3 +49,7 @@
         id       (te/id-of v)]
     (tg/remove-vertex g v)
     (is (nil? (tg/get-vertex g id)))))
+
+;; TODO: accessing node properties
+;; TODO: assoc node properties
+;; TODO: clear all properties
