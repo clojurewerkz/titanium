@@ -1,11 +1,11 @@
 (defproject clojurewerkz/titanium "1.0.0-SNAPSHOT"
   :description "Titanium a powerful Clojure graph library build on top of Aurelius Titan"
   :dependencies [[org.clojure/clojure           "1.4.0"]
-                 [clojurewerkz/support          "0.10.0"]
+                 [clojurewerkz/support          "0.12.0"]
                  [com.thinkaurelius.titan/titan "0.2.0"]]
   :source-paths  ["src/clojure"]
   :profiles {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
-             :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC2"]]}
+             :1.5 {:dependencies [[org.clojure/clojure "1.5.0-beta10"]]}
              :dev {:resource-paths ["test/resources"]
                    :plugins [[codox "0.6.1"]]
                    :codox {:sources ["src/clojure"]
