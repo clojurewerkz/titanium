@@ -50,6 +50,69 @@
     (tg/remove-vertex g v)
     (is (nil? (tg/get-vertex g id)))))
 
-;; TODO: accessing node properties
-;; TODO: assoc node properties
-;; TODO: clear all properties
+(deftest test-accessing-node-properties
+  (let [g        (tg/open-in-memory-graph)
+        data     {:name "Gerard" :age 30}
+        v        (tg/add-vertex g data)]
+    (is (= {"name" "Gerard" "age" 30} (te/properties-of v)))
+    (is (= data (te/properties-of v true)))
+    (are [k val] (is (= val (te/property-of v k)))
+         :name "Gerard" :age 30)))
+
+(deftest test-associng-node-properties
+  (let [g        (tg/open-in-memory-graph)
+        data     {:name "Gerard" :age 30}
+        v        (tg/add-vertex g data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (te/assoc! v :age 31)]
+    (is (= v v'))
+    (is (= {"name" "Gerard" "age" 31} (te/properties-of v)))
+    (are [k val] (is (= val (te/property-of v k)))
+         :name "Gerard" :age 31)))
+
+(deftest test-mutating-node-properties-with-fn
+  (let [g        (tg/open-in-memory-graph)
+        data     {:name "Gerard" :age 30}
+        v        (tg/add-vertex g data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (te/mutate-with! v :age inc)]
+    (is (= v v'))
+    (is (= {"name" "Gerard" "age" 31} (te/properties-of v)))
+    (are [k val] (is (= val (te/property-of v k)))
+         :name "Gerard" :age 31)))
+
+(deftest test-merging-node-properties-with-a-single-map
+  (let [g        (tg/open-in-memory-graph)
+        data     {:name "Gerard" :age 30}
+        v        (tg/add-vertex g data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (te/merge! v {:age 31})]
+    (is (= v v'))
+    (is (= {"name" "Gerard" "age" 31} (te/properties-of v)))
+    (are [k val] (is (= val (te/property-of v k)))
+         :name "Gerard" :age 31)))
+
+(deftest test-merging-node-properties-with-multiple-maps
+  (let [g        (tg/open-in-memory-graph)
+        data     {:name "Gerard" :age 30}
+        v        (tg/add-vertex g data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (te/merge! v {:age 31} {:position "Industrial Designer"})]
+    (is (= v v'))
+    (is (= {"name" "Gerard" "age" 31 "position" "Industrial Designer"} (te/properties-of v)))
+    (are [k val] (is (= val (te/property-of v k)))
+         :name "Gerard" :age 31)))
+
+(deftest test-clearing-node-properties
+  (let [g        (tg/open-in-memory-graph)
+        data     {:name "Gerard" :age 30}
+        v        (tg/add-vertex g data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (te/clear! v)]
+    (is (= v v'))
+    (is (= {} (te/properties-of v)))))
