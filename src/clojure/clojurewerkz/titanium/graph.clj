@@ -1,4 +1,5 @@
 (ns clojurewerkz.titanium.graph
+  (:require [clojurewerkz.titanium.elements :as te])
   (:import [com.thinkaurelius.titan.core TitanFactory TitanGraph]
            [com.tinkerpop.blueprints Graph KeyIndexableGraph Vertex Edge]))
 
@@ -55,8 +56,12 @@
 
 (defn ^Edge add-edge
   "Adds an edge to graph"
-  [^Graph g ^Edge edge-a ^Edge edge-b ^String label]
-  (.addEdge g nil edge-a edge-b label))
+  ([^Graph g ^Vertex a ^Vertex b ^String label]
+     (.addEdge g nil a b label))
+  ([^Graph g ^Vertex a ^Vertex b ^String label properties]
+     (let [e (.addEdge g nil a b label)]
+       (te/merge! e properties)
+       e)))
 
 
 ;;

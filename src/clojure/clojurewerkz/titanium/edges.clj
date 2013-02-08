@@ -1,4 +1,5 @@
 (ns clojurewerkz.titanium.edges
+  (:refer-clojure :exclude [find])
   (:require [clojurewerkz.titanium.conversion :as cnv])
   (:import [com.tinkerpop.blueprints Vertex Edge Direction]))
 
