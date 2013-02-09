@@ -39,5 +39,5 @@
 
 (defmacro find-vertices
   [^Vertex starting-point & body]
-  `(let [query# (-> (query-on ~starting-point) ~@body)]
+  `(let [^Query query# (-> (query-on ~starting-point) ~@body)]
      (into [] (.vertices query#))))
