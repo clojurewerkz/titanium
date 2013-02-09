@@ -50,6 +50,7 @@
        "GREATER_THAN_EQUAL"         Query$Compare/GREATER_THAN_EQUAL
        ">="                    Query$Compare/GREATER_THAN_EQUAL
        '>=                     Query$Compare/GREATER_THAN_EQUAL
+       :>=                     Query$Compare/GREATER_THAN_EQUAL
 
        :less_than          Query$Compare/LESS_THAN
        Query$Compare/LESS_THAN Query$Compare/LESS_THAN
@@ -57,10 +58,12 @@
        "LESS_THAN"         Query$Compare/LESS_THAN
        "<"                    Query$Compare/LESS_THAN
        '<                     Query$Compare/LESS_THAN
+       :<                     Query$Compare/LESS_THAN
 
        :less_than_equal          Query$Compare/LESS_THAN_EQUAL
        Query$Compare/LESS_THAN_EQUAL Query$Compare/LESS_THAN_EQUAL
        "less_than_equal"         Query$Compare/LESS_THAN_EQUAL
        "LESS_THAN_EQUAL"         Query$Compare/LESS_THAN_EQUAL
        "<="                    Query$Compare/LESS_THAN_EQUAL
-       '<=                     Query$Compare/LESS_THAN_EQUAL))
+       '<=                     Query$Compare/LESS_THAN_EQUAL
+       :<=                     Query$Compare/LESS_THAN_EQUAL))

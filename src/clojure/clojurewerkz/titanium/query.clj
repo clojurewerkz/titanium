@@ -6,7 +6,7 @@
 ;; Implementation
 ;;
 
-(defn ^Query query-on
+(defn query-on
   [^Vertex starting-point]
   (.query starting-point))
 
@@ -18,7 +18,7 @@
 (defn has
   ([^Query q key val]
      (.has q (name key) val))
-  ([^Query q key val operator]
+  ([^Query q key operator val]
      (.has q (name key) val (cnv/to-query-compare operator))))
 
 (defn interval
@@ -39,5 +39,15 @@
 
 (defmacro find-vertices
   [^Vertex starting-point & body]
-  `(let [^Query query# (-> (query-on ~starting-point) ~@body)]
+  `(let [^com.tinkerpop.blueprints.Query query# (-> (query-on ~starting-point) ~@body)]
      (into [] (.vertices query#))))
+
+(defmacro find-edges
+  [^Vertex starting-point & body]
+  `(let [^com.tinkerpop.blueprints.Query query# (-> (query-on ~starting-point) ~@body)]
+     (into [] (.edges query#))))
+
+(defmacro ^long count-edges
+  [^Vertex starting-point & body]
+  `(let [^com.tinkerpop.blueprints.Query query# (-> (query-on ~starting-point) ~@body)]
+     (.count query#)))
