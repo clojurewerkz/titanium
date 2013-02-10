@@ -1,4 +1,5 @@
 (ns clojurewerkz.titanium.gpipe
+  (:refer-clojure :exclude [filter])
   (:require [clojurewerkz.titanium.conversion :as cnv])
   (:import [com.tinkerpop.blueprints Vertex]
            [com.tinkerpop.gremlin.java GremlinPipeline]
