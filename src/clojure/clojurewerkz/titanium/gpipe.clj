@@ -25,11 +25,11 @@
 
 (defn out
   [^GremlinPipeline p & xs]
-  (.out p (into-array String xs)))
+  (.out p ^"[Ljava.lang.String;" (into-array String xs)))
 
 (defn out-e
   [^GremlinPipeline p & xs]
-  (.outE p (into-array String xs)))
+  (.outE p ^"[Ljava.lang.String;" (into-array String xs)))
 
 (defn out-v
   [^GremlinPipeline p]
@@ -37,11 +37,11 @@
 
 (defn in
   [^GremlinPipeline p & xs]
-  (.in p (into-array String xs)))
+  (.in p ^"[Ljava.lang.String;" (into-array String xs)))
 
 (defn in-e
   [^GremlinPipeline p & xs]
-  (.inE p (into-array String xs)))
+  (.inE p ^"[Ljava.lang.String;" (into-array String xs)))
 
 (defn in-v
   [^GremlinPipeline p]
@@ -49,11 +49,11 @@
 
 (defn both
   [^GremlinPipeline p & xs]
-  (.both p (into-array String xs)))
+  (.both p ^"[Ljava.lang.String;" (into-array String xs)))
 
 (defn both-e
   [^GremlinPipeline p & xs]
-  (.bothE p (into-array String xs)))
+  (.bothE p ^"[Ljava.lang.String;" (into-array String xs)))
 
 (defn both-v
   [^GremlinPipeline p]
