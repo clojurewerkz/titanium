@@ -26,6 +26,10 @@
   (open [^java.io.File f]
     (TitanFactory/open (.getPath f)))
 
+  org.apache.commons.configuration.Configuration
+  (open [^org.apache.commons.configuration.Configuration conf]
+    (TitanFactory/open conf))
+
   com.tinkerpop.blueprints.Graph
   (close [^Graph g]
     (.shutdown g))
