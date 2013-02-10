@@ -5,6 +5,8 @@
                  [com.thinkaurelius.titan/titan      "0.2.0"]
                  [com.tinkerpop.gremlin/gremlin-java "2.2.0"]]
   :source-paths  ["src/clojure"]
+  :java-source-paths ["src/java"]
+  :javac-options     ["-target" "1.6" "-source" "1.6"]
   :profiles {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
              :1.5 {:dependencies [[org.clojure/clojure "1.5.0-beta10"]]}
              :dev {:resource-paths ["test/resources"]

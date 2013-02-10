@@ -1,5 +1,6 @@
 (ns clojurewerkz.titanium.conversion
-  (:import [com.tinkerpop.blueprints Graph Vertex Direction Query$Compare]))
+  (:import [com.tinkerpop.blueprints Graph Vertex Direction Query$Compare]
+           [com.tinkerpop.gremlin Tokens$T]))
 
 
 ;;
@@ -63,3 +64,45 @@
 
       "less_than_equal" Query$Compare/LESS_THAN_EQUAL
       "<="              Query$Compare/LESS_THAN_EQUAL)))
+
+
+(defprotocol TokensTConversion
+  (^com.tinkerpop.gremlin.Tokens$T to-tokens-t [input] "Converts input to Gremlin's Tokens.T comparison operation"))
+
+(extend-protocol TokensTConversion
+  Tokens$T
+  (to-tokens-t [input]
+    input)
+
+  clojure.lang.Named
+  (to-tokens-t [input]
+    (to-tokens-t (name input)))
+
+  String
+  (to-tokens-t [input]
+    (case (.toLowerCase input)
+      "equal" Tokens$T/eq
+      "eq"    Tokens$T/eq
+      "="     Tokens$T/eq
+      "=="    Tokens$T/eq
+
+      "not_equal" Tokens$T/neq
+      "neq"       Tokens$T/neq
+      "!="        Tokens$T/neq
+      "=/="       Tokens$T/neq
+
+      "gt"           Tokens$T/gt
+      "greater_than" Tokens$T/gt
+      ">"            Tokens$T/gt
+
+      "gte"                Tokens$T/gte
+      "greater_than_equal" Tokens$T/gte
+      ">="                 Tokens$T/gte
+
+      "lt"        Tokens$T/lt
+      "less_than" Tokens$T/lt
+      "<"         Tokens$T/lt
+
+      "lte"             Tokens$T/lte
+      "less_than_equal" Tokens$T/lte
+      "<="              Tokens$T/lte)))
