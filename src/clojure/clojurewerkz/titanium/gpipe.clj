@@ -75,9 +75,21 @@
   [^GremlinPipeline p]
   (.count p))
 
+(defn back
+  [^GremlinPipeline p ^long steps]
+  (.back p steps))
+
+(defn back-to
+  [^GremlinPipeline p ^String named-step]
+  (.back p named-step))
+
 (defn dorun
   [^GremlinPipeline p]
   (.iterate p))
+
+(defn dedup
+  ([^GremlinPipeline p]
+     (.dedup p)))
 
 (defn next
   [^GremlinPipeline p ^long n]
