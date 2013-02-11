@@ -1,4 +1,4 @@
-(defproject clojurewerkz/titanium "1.0.0-alpha1"
+(defproject clojurewerkz/titanium "1.0.0-alpha2-SNAPSHOT"
   :description "Titanium a powerful Clojure graph library build on top of Aurelius Titan"
   :dependencies [[org.clojure/clojure                "1.4.0"]
                  [clojurewerkz/support               "0.12.0"]
