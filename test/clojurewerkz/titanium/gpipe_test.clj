@@ -12,7 +12,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/property :age)
                          (q/into-set))]
@@ -26,7 +26,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/has :age 32)
                          (q/property :name)
@@ -41,7 +41,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/has :age '= 32)
                          (q/property :name)
@@ -56,7 +56,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/has :age '< 36)
                          (q/property :name)
@@ -71,7 +71,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/has :age '> 36)
                          (q/property :name)
@@ -87,7 +87,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out-e "friend")
                          (q/label)
                          (q/into-set))]
@@ -101,7 +101,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/random 0.5)
                          (q/has :age '> 36)
@@ -117,7 +117,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/has :age '> 36)
                          (q/property :name)
@@ -134,7 +134,7 @@
         c    (tg/add-vertex g {:name "Thomas" :age 38})
         a-friend-b    (tg/add-edge   g a b "friend" {:age 28})
         a-friend-c    (tg/add-edge   g a c "friend" {:age 30})
-        xs   (q/pipeline a
+        xs   (q/start-at a
                          (q/out "friend")
                          (q/has :age '> 36)
                          (q/id)

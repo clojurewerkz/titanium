@@ -90,8 +90,14 @@
   [^GremlinPipeline p]
   (.id p))
 
+
 (defmacro pipeline
-  [^Vertex starting-point & body]
+  [& body]
+  `(-> (GremlinPipeline.)
+       ~@body))
+
+(defmacro start-at
+  [starting-point & body]
   `(-> (GremlinPipeline. ~starting-point)
        ~@body))
 

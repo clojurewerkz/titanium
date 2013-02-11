@@ -6,7 +6,7 @@
 ;; Implementation
 ;;
 
-(defn query-on
+(defn start-at
   [^Vertex starting-point]
   (.query starting-point))
 
@@ -39,15 +39,15 @@
 
 (defmacro find-vertices
   [^Vertex starting-point & body]
-  `(let [^com.tinkerpop.blueprints.Query query# (-> (query-on ~starting-point) ~@body)]
+  `(let [^com.tinkerpop.blueprints.Query query# (-> (start-at ~starting-point) ~@body)]
      (into [] (.vertices query#))))
 
 (defmacro find-edges
   [^Vertex starting-point & body]
-  `(let [^com.tinkerpop.blueprints.Query query# (-> (query-on ~starting-point) ~@body)]
+  `(let [^com.tinkerpop.blueprints.Query query# (-> (start-at ~starting-point) ~@body)]
      (into [] (.edges query#))))
 
 (defmacro ^long count-edges
   [^Vertex starting-point & body]
-  `(let [^com.tinkerpop.blueprints.Query query# (-> (query-on ~starting-point) ~@body)]
+  `(let [^com.tinkerpop.blueprints.Query query# (-> (start-at ~starting-point) ~@body)]
      (.count query#)))
