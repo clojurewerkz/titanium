@@ -58,8 +58,21 @@
                          (p/has :times '> 1)
                          (p/in-v)
                          (p/property :name)
+                         (p/into-set))
+          c3 (p/start-at hercules
+                         (p/out-e "battled")
+                         (p/has :times '> 1)
+                         (p/in-v)
+                         (p/count))
+          r4 (p/start-at pluto
+                         (p/out "lives")
+                         (p/in  "lives")
+                         (p/except [pluto])
+                         (p/property :name)
                          (p/into-set))]
       (is (= r1 hercules))
       (is (= r2 #{"Alcmene" "Jupiter"}))
-      (is (= r3 #{"Cerberus" "Hydra"})))
+      (is (= r3 #{"Cerberus" "Hydra"}))
+      (is (= c3 2))
+      (is (= r4 #{"Cerberus"})))
     (tg/close g)))
