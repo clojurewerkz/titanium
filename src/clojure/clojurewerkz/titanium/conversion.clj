@@ -1,6 +1,7 @@
 (ns clojurewerkz.titanium.conversion
   (:import [com.tinkerpop.blueprints Graph Vertex Direction Query$Compare]
-           [com.tinkerpop.gremlin Tokens$T]))
+           [com.tinkerpop.gremlin Tokens$T]
+           com.tinkerpop.pipes.util.structures.Row))
 
 
 ;;

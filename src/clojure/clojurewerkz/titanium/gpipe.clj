@@ -87,6 +87,10 @@
   [^GremlinPipeline p]
   (.iterate p))
 
+(defn doall
+  [^GremlinPipeline p]
+  (.toList p))
+
 (defn dedup
   ([^GremlinPipeline p]
      (.dedup p)))
@@ -118,6 +122,23 @@
   [^GremlinPipeline p]
   (.id p))
 
+(defn as
+  [^GremlinPipeline p ^String s]
+  (.as p s))
+
+;; Currently running a pipeline that has a PipeFunction in
+;; it hangs with Pipes 2.2.0. Thread dumps suggest it may be
+;; a class loaders issue. Needs investigation. MK.
+#_ (defn step
+     [^GremlinPipeline p f]
+     (.step p (pipe-fn f)))
+
+(defn select
+  ([^GremlinPipeline p]
+     (.select p))
+  ([^GremlinPipeline p & fs]
+     (.select p (into-array PipeFunction (clojure.core/map pipe-fn fs)))))
+
 
 (defmacro pipeline
   [& body]
@@ -136,10 +157,3 @@
 (defn into-set
   [^GremlinPipeline p]
   (into #{} p))
-
-;; Currently running a pipeline that has a PipeFunction in
-;; it hangs with Pipes 2.2.0. Thread dumps suggest it may be
-;; a class loaders issue. Needs investigation. MK.
-#_ (defn step
-     [^GremlinPipeline p f]
-     (.step p (pipe-fn f)))

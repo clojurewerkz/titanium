@@ -69,10 +69,25 @@
                          (p/in  "lives")
                          (p/except [pluto])
                          (p/property :name)
-                         (p/into-set))]
+                         (p/into-set))
+          r5 (->> (p/start-at pluto
+                              (p/out "brother")
+                              (p/as  "god")
+                              (p/out "lives")
+                              (p/as  "place")
+                              (p/select (fn [v]
+                                          (.getProperty v "name")))
+                              (p/into-set))
+                  (map (fn [row]
+                         (into [] row))))]
       (is (= r1 hercules))
       (is (= r2 #{"Alcmene" "Jupiter"}))
       (is (= r3 #{"Cerberus" "Hydra"}))
       (is (= c3 2))
-      (is (= r4 #{"Cerberus"})))
+      (is (= r4 #{"Cerberus"}))
+      ;; when https://github.com/tinkerpop/pipes/issues/75 is fixed,
+      ;; we will be able to turn tables into vectors of maps, as they
+      ;; should be represented (Neocons does it for Cypher responses). MK.
+      (is (= '(["Jupiter" "Sky"] ["Neptune" "Sea"])
+             r5)))
     (tg/close g)))
