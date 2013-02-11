@@ -1,5 +1,7 @@
 (defproject clojurewerkz/titanium "1.0.0-alpha2-SNAPSHOT"
   :description "Titanium a powerful Clojure graph library build on top of Aurelius Titan"
+  :url "http://titanium.clojurewerkz.org"
+  :license {:name "Eclipse Public License"}
   :dependencies [[org.clojure/clojure                "1.4.0"]
                  [clojurewerkz/support               "0.12.0"]
                  [com.thinkaurelius.titan/titan      "0.2.0"]
