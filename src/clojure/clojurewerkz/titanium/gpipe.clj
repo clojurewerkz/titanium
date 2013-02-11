@@ -1,5 +1,5 @@
 (ns clojurewerkz.titanium.gpipe
-  (:refer-clojure :exclude [filter])
+  (:refer-clojure :exclude [filter count next])
   (:require [clojurewerkz.titanium.conversion :as cnv])
   (:import [com.tinkerpop.blueprints Vertex]
            [com.tinkerpop.gremlin.java GremlinPipeline]
@@ -63,9 +63,25 @@
   [^GremlinPipeline p]
   (.label p))
 
+(defn except
+  [^GremlinPipeline p coll]
+  (.except p coll))
+
 (defn random
   [^GremlinPipeline p ^double bias]
   (.random p bias))
+
+(defn count
+  [^GremlinPipeline p]
+  (.count p))
+
+(defn dorun
+  [^GremlinPipeline p]
+  (.iterate p))
+
+(defn next
+  [^GremlinPipeline p ^long n]
+  (.next p n))
 
 (defn property
   [^GremlinPipeline p prop]
