@@ -67,10 +67,10 @@
 
 (defn ^Edge add-edge
   "Adds an edge to graph"
-  ([^Graph g ^Vertex a ^Vertex b ^String label]
-     (.addEdge g nil a b label))
-  ([^Graph g ^Vertex a ^Vertex b ^String label properties]
-     (let [e (.addEdge g nil a b label)]
+  ([^Graph g ^Vertex head ^Vertex tail ^String label]
+     (.addEdge g nil head tail label))
+  ([^Graph g ^Vertex head ^Vertex tail ^String label properties]
+     (let [e (.addEdge g nil head tail label)]
        (te/merge! e properties)
        e)))
 
