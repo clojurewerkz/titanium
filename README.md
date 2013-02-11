@@ -1,4 +1,4 @@
-# Titanium, a Clojure Layer On Top of ThinkAurelius Titan
+# Titanium, a Clojure Layer On Top of Aurelius Titan
 
 Titanium is a Clojure graph library built on top of [Titan](http://thinkaurelius.github.com/titan/)
 and the [Tinkerpop stack](http://tinkerpop.com).
