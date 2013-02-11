@@ -30,6 +30,13 @@
   (open [^org.apache.commons.configuration.Configuration conf]
     (TitanFactory/open conf))
 
+  clojure.lang.IPersistentMap
+  (open [^clojure.lang.IPersistentMap m]
+    (let [bc (org.apache.commons.configuration.BaseConfiguration.)]
+      (doseq [[k v] m]
+        (.setProperty bc (name k) v))
+      (TitanFactory/open bc)))
+
   com.tinkerpop.blueprints.Graph
   (close [^Graph g]
     (.shutdown g))

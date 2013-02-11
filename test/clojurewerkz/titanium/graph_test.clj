@@ -2,11 +2,33 @@
   (:require [clojurewerkz.titanium.graph    :as tg]
             [clojurewerkz.titanium.elements :as te]
             [clojurewerkz.titanium.edges    :as ted])
-  (:use clojure.test))
+  (:use clojure.test)
+  (:import java.io.File))
 
 
-(deftest test-open-and-close-a-local-graph
+(deftest test-open-and-close-a-ram-graph
   (let [g (tg/open-in-memory-graph)]
+    (is (tg/open? g))
+    (tg/close g)))
+
+(deftest test-open-and-close-a-local-graph-with-a-directory-path
+  (let [p (str (System/getProperty "java.io.tmpdir") File/pathSeparator "titanium-graph")
+        d (let [f (File. p)]
+            (.mkdirs f)
+            (.deleteOnExit f)
+            f)
+        g (tg/open d)]
+    (is (tg/open? g))
+    (tg/close g)))
+
+(deftest test-open-and-close-a-local-graph-with-a-configuration-map
+  (let [p (str (System/getProperty "java.io.tmpdir") File/pathSeparator "titanium-graph")
+        d (let [f (File. p)]
+            (.mkdirs f)
+            (.deleteOnExit f)
+            (.getPath f))
+        g (tg/open {"storage.directory" d
+                    "storage.backend"   "berkeleyje"})]
     (is (tg/open? g))
     (tg/close g)))
 
