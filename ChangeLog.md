@@ -1,6 +1,9 @@
 ## Changes between Titanium 1.0.0-alpha1 and 1.0.0-alpha2
 
-No changes yet.
+### clojurewerkz.titanium.graph/get-vertices Now Accepts Keywords For Keys
+
+`clojurewerkz.titanium.graph/get-vertices` now accepts keywords for keys,
+like many other functions in Titanium.
 
 
 ## Changes in Titanium 1.0.0-alpha1

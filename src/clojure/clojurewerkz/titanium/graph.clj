@@ -103,8 +103,8 @@
   "Returns a sequence of vertices where given key has the provided value"
   ([^Graph g]
      (.getVertices g))
-  ([^Graph g ^String k v]
-     (.getVertices g k v)))
+  ([^Graph g k v]
+     (.getVertices g (name k) v)))
 
 (defn ^Edge get-edge
   "Looks up an edge by id"
@@ -115,8 +115,8 @@
   "Returns a sequence of edges where given key has the provided value"
   ([^Graph g]
      (.getEdges g))
-  ([^Graph g ^String k v]
-     (.getEdges g k v)))
+  ([^Graph g k v]
+     (.getEdges g (name k) v)))
 
 
 

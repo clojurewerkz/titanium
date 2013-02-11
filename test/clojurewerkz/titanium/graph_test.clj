@@ -93,8 +93,18 @@
         m1 {:age 28 :name "Michael"}
         m2 {:age 26 :name "Alex"}
         v1 (tg/add-vertex g m1)
-        v2 (tg/add-vertex g m2)]
-    ))
+        v2 (tg/add-vertex g m2)
+        xs (set (tg/get-vertices g))]
+    (is (= #{v1 v2} xs))))
+
+(deftest test-get-vertices-by-kv
+  (let [g  (tg/open-in-memory-graph)
+        m1 {:age 28 :name "Michael"}
+        m2 {:age 26 :name "Alex"}
+        v1 (tg/add-vertex g m1)
+        v2 (tg/add-vertex g m2)
+        xs (set (tg/get-vertices g :name "Michael"))]
+    (is (= #{v1} xs))))
 
 ;;
 ;; Edges
