@@ -1,12 +1,14 @@
 # Titanium, a Clojure Layer On Top of ThinkAurelius Titan
 
-Titanium is a thin Clojure graph library built on top of [Titan](http://thinkaurelius.github.com/titan/).
+Titanium is a Clojure graph library built on top of [Titan](http://thinkaurelius.github.com/titan/)
+and the [Tinkerpop stack](http://tinkerpop.com).
 
 
 ## Project Goals
 
  * Make good parts of Titan easier to use from Clojure
  * Roughly match [Neocons](http://clojureneo4j.info) in terms of functionality
+ * Take full advantage of the excellent [Tinkerpop stack](http://tinkerpop.com)
  * Be well documented
  * Be well tested
  * Add additional features and DSL bits for convenience
@@ -59,13 +61,15 @@ With Maven:
 
 ## Getting Started
 
-Please refer to our [Getting Started guide](...). Don't hesitate to join our [mailing list](https://groups.google.com/forum/#!forum/clojure-titanium) and ask questions, too!
+Please refer to our [Getting Started guide](http://titanium.clojurewerkz.org/articles/getting_started.html). Don't hesitate to join our [mailing list](https://groups.google.com/forum/#!forum/clojure-titanium) and ask questions, too!
 
 
 ## Documentation & Examples
 
-Our documentation site is not yet live, sorry.
+Titanium [documentation guides](http://titanium.clojurewerkz.org) are still very
+much incomplete but improving week after week.
 
+[Titanium's test suite](https://github.com/clojurewerkz/titanium/tree/master/test/clojurewerkz/titanium) can be used to get more code examples.
 
 
 ## Supported Clojure versions
@@ -89,7 +93,7 @@ Titanium is part of the group of [Clojure libraries known as ClojureWerkz](http:
 
 ## Development
 
-titanium uses [Leiningen 2](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md). Make sure you have it installed and then run tests against
+Titanium uses [Leiningen 2](https://github.com/technomancy/leiningen/blob/master/doc/TUTORIAL.md). Make sure you have it installed and then run tests against
 supported Clojure versions using
 
     lein2 all test
@@ -104,3 +108,6 @@ on Github.
 Copyright (C) 2013 Michael S. Klishin, Alex Petrov.
 
 Double licensed under the [Eclipse Public License](http://www.eclipse.org/legal/epl-v10.html) (the same as Clojure) or the [Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+
+[Titan](http://thinkaurelius.github.com/titan/) is licensed under the [Apache Public License 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+
