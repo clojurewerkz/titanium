@@ -127,3 +127,22 @@
         m2 {"station" "Northfields"  "lines" #{"Piccadilly"}}]
     (tg/populate g
                  (m1 -links-> m2))))
+
+
+;;
+;; Transactions
+;;
+
+(deftest test-very-basic-transaction-that-is-committed
+  (let [g   (tg/open-in-memory-graph)
+        v1  (tg/add-vertex g {})
+        v2  (tg/add-vertex g {})]
+    (tg/commit-tx! g)
+    (tg/close g)))
+
+(deftest test-very-basic-transaction-that-is-rolled-back
+  (let [g   (tg/open (System/getProperty "java.io.tmpdir"))
+        v1  (tg/add-vertex g {})
+        v2  (tg/add-vertex g {})]
+    (tg/rollback-tx! g)
+    (tg/close g)))

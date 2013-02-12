@@ -1,5 +1,13 @@
 ## Changes between Titanium 1.0.0-alpha1 and 1.0.0-alpha2
 
+### Transaction Control Functions
+
+`clojurewerkz.titanium.graph/commit-tx!` and `clojurewerkz.titanium.graph/rollback-tx!`
+commit and roll back current transaction, respectively. Note that closing a
+graph will automatically commit current transaction. Every operation
+that modifies the graph will automatically start a transaction if needed.
+
+
 ### clojurewerkz.titanium.graph/get-vertices Now Accepts Keywords For Keys
 
 `clojurewerkz.titanium.graph/get-vertices` now accepts keywords for keys,

@@ -1,7 +1,9 @@
 (ns clojurewerkz.titanium.graph
   (:require [clojurewerkz.titanium.elements :as te])
   (:import [com.thinkaurelius.titan.core TitanFactory TitanGraph]
-           [com.tinkerpop.blueprints Graph KeyIndexableGraph Vertex Edge]))
+           [com.tinkerpop.blueprints Vertex Edge
+            Graph KeyIndexableGraph
+            TransactionalGraph TransactionalGraph$Conclusion]))
 
 
 ;;
@@ -139,3 +141,18 @@
 (defn deindex-edges-by-key!
   [^KeyIndexableGraph g ^String k]
   (.dropKeyIndex g k com.tinkerpop.blueprints.Edge))
+
+
+;;
+;; Transactions
+;;
+
+(defn commit-tx!
+  "Commits current transaction"
+  [^TransactionalGraph g]
+  (.stopTransaction g TransactionalGraph$Conclusion/SUCCESS))
+
+(defn rollback-tx!
+  "Rolls back current transaction"
+  [^TransactionalGraph g]
+  (.stopTransaction g TransactionalGraph$Conclusion/FAILURE))
