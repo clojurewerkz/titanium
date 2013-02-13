@@ -146,3 +146,12 @@
         v2  (tg/add-vertex g {})]
     (tg/rollback-tx! g)
     (tg/close g)))
+
+(deftest test-explicitly-started-transaction
+  (let [g   (tg/open-in-memory-graph)
+        tx  (tg/start-transaction g)]
+    (dotimes [n 100]
+      (.start (Thread. (fn []
+                         (tg/add-vertex tx {:n n})))))
+    (tg/commit-tx! tx)
+    (tg/close g)))

@@ -156,3 +156,9 @@
   "Rolls back current transaction"
   [^TransactionalGraph g]
   (.stopTransaction g TransactionalGraph$Conclusion/FAILURE))
+
+(defn start-tx
+  "Starts a transaction. Only necessary if operations in a transaction
+   will be used across threads."
+  [^TransactionalGraph g]
+  (.startTransaction g))
