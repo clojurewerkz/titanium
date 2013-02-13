@@ -5,7 +5,7 @@
             [clojurewerkz.support.io        :as sio])
   (:use clojure.test)
   (:import java.io.File
-           java.util.concurrent.TimeUnit))
+           [java.util.concurrent CountDownLatch TimeUnit]))
 
 
 (deftest test-open-and-close-a-ram-graph
@@ -173,4 +173,19 @@
         g   (tg/open d)]
     (tg/run-transactionally g (fn [tx]
                                 (tg/add-vertex tx {})))
+    (tg/close g)))
+
+(deftest test-run-transactionally-with-multiple-threads
+  (let [d   (let [p (sio/create-temp-dir)]
+              (.deleteOnExit p)
+              p)
+        g   (tg/open d)
+        n   10
+        l   (CountDownLatch. n)]
+    (tg/run-transactionally g (fn [tx]
+                                (dotimes [i n]
+                                  (.start (Thread. (fn []
+                                                     (tg/add-vertex tx {})
+                                                     (.countDown l)))))
+                                (.await l 2 TimeUnit/SECONDS)))
     (tg/close g)))
