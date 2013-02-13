@@ -1,9 +1,11 @@
 (ns clojurewerkz.titanium.graph-test
   (:require [clojurewerkz.titanium.graph    :as tg]
             [clojurewerkz.titanium.elements :as te]
-            [clojurewerkz.titanium.edges    :as ted])
+            [clojurewerkz.titanium.edges    :as ted]
+            [clojurewerkz.support.io        :as sio])
   (:use clojure.test)
-  (:import java.io.File))
+  (:import java.io.File
+           java.util.concurrent.TimeUnit))
 
 
 (deftest test-open-and-close-a-ram-graph
@@ -12,21 +14,17 @@
     (tg/close g)))
 
 (deftest test-open-and-close-a-local-graph-with-a-directory-path
-  (let [p (str (System/getProperty "java.io.tmpdir") File/pathSeparator "titanium-graph")
-        d (let [f (File. p)]
-            (.mkdirs f)
-            (.deleteOnExit f)
-            f)
+  (let [p (sio/create-temp-dir)
+        d (do (.deleteOnExit p)
+              p)
         g (tg/open d)]
     (is (tg/open? g))
     (tg/close g)))
 
 (deftest test-open-and-close-a-local-graph-with-a-configuration-map
-  (let [p (str (System/getProperty "java.io.tmpdir") File/pathSeparator "titanium-graph")
-        d (let [f (File. p)]
-            (.mkdirs f)
-            (.deleteOnExit f)
-            (.getPath f))
+  (let [p (sio/create-temp-dir)
+        d (do (.deleteOnExit p)
+              (.getPath p))
         g (tg/open {"storage.directory" d
                     "storage.backend"   "berkeleyje"})]
     (is (tg/open? g))
@@ -122,11 +120,11 @@
     (is (= v1 (ted/tail-vertex e)))))
 
 #_ (deftest test-getting-edge-head-and-tail-via-fancy-macro
-  (let [g  (tg/open-in-memory-graph)
-        m1 {"station" "Boston Manor" "lines" #{"Piccadilly"}}
-        m2 {"station" "Northfields"  "lines" #{"Piccadilly"}}]
-    (tg/populate g
-                 (m1 -links-> m2))))
+     (let [g  (tg/open-in-memory-graph)
+           m1 {"station" "Boston Manor" "lines" #{"Piccadilly"}}
+           m2 {"station" "Northfields"  "lines" #{"Piccadilly"}}]
+       (tg/populate g
+                    (m1 -links-> m2))))
 
 
 ;;
@@ -147,11 +145,32 @@
     (tg/rollback-tx! g)
     (tg/close g)))
 
-(deftest test-explicitly-started-transaction
-  (let [g   (tg/open-in-memory-graph)
-        tx  (tg/start-transaction g)]
-    (dotimes [n 100]
-      (.start (Thread. (fn []
-                         (tg/add-vertex tx {:n n})))))
+(deftest test-supports-transaction
+  (let [d   (let [p (sio/create-temp-dir)]
+              (.deleteOnExit p)
+              p)
+        g   (tg/open d)
+        mg  (tg/open-in-memory-graph)]
+    (is (tg/supports-transactions? g))
+    (is (not (tg/supports-transactions? mg)))
+    (tg/close g)
+    (tg/close mg)))
+
+(deftest test-explicitly-started-single-threaded-transaction
+  (let [d   (let [p (sio/create-temp-dir)]
+              (.deleteOnExit p)
+              p)
+        g   (tg/open d)
+        tx  (tg/start-tx g)]
+    (tg/add-vertex tx {})
     (tg/commit-tx! tx)
+    (tg/close g)))
+
+(deftest test-in-transaction-with-just-one-thread
+  (let [d   (let [p (sio/create-temp-dir)]
+              (.deleteOnExit p)
+              p)
+        g   (tg/open d)]
+    (tg/in-transaction g (fn [tx]
+                           (tg/add-vertex tx {})))
     (tg/close g)))

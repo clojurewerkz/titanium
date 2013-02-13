@@ -144,6 +144,29 @@
 
 
 ;;
+;; Features
+;;
+
+(defn get-features
+  "Returns a map of features supported by provided graph"
+  [^Graph g]
+  (->> g .getFeatures .toMap (into {})))
+
+(defn supports-feature?
+  "Returns true if provided graph supports the given feature,
+   false otherwise"
+  [^Graph g ^String feature]
+  (-> (get (get-features g) feature)
+      not
+      not))
+
+(defn supports-transactions?
+  "Returns true if provided graph supports transactions, false otherwise"
+  [^Graph g]
+  (supports-feature? g "supportsTransactions"))
+
+
+;;
 ;; Transactions
 ;;
 
@@ -162,3 +185,20 @@
    will be used across threads."
   [^TransactionalGraph g]
   (.startTransaction g))
+
+(defn- perform-transaction
+  [^TransactionalGraph g f]
+  (let [tx (start-tx g)]
+    (try
+      (f tx)
+      (commit-tx! tx)
+      (catch Exception e
+        (rollback-tx! tx)
+        (throw e)))))
+
+(defn in-transaction
+  ""
+  [^Graph g f]
+  (if (supports-transactions? g)
+    (perform-transaction g f)
+    (f g)))

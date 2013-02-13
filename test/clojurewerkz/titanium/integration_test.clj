@@ -7,13 +7,6 @@
   (:use clojure.test)
   (:import java.io.File))
 
-(defn tmp-dir
-  [s]
-  (let [f (File. (str (System/getProperty "java.io.tmpdir") File/pathSeparator s))]
-    (.mkdirs f)
-    (.deleteOnExit f)
-    (.getPath f)))
-
 ;; The Graph of the Gods example from the Titan wiki
 (deftest test-integration-example1
   (let [g        (tg/open-in-memory-graph)
