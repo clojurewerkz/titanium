@@ -3,7 +3,7 @@
   :url "http://titanium.clojurewerkz.org"
   :license {:name "Eclipse Public License"}
   :dependencies [[org.clojure/clojure                "1.4.0"]
-                 [clojurewerkz/support               "0.12.0"]
+                 [clojurewerkz/support               "0.13.0"]
                  [com.thinkaurelius.titan/titan      "0.2.0"]
                  [com.tinkerpop.gremlin/gremlin-java "2.2.0"]]
   :source-paths  ["src/clojure"]
