@@ -192,9 +192,9 @@
     (try
       (f tx)
       (commit-tx! tx)
-      (catch Exception e
+      (catch Throwable t
         (rollback-tx! tx)
-        (throw e)))))
+        (throw t)))))
 
 (defn run-transactionally
   "Evaluates provided function in a transaction"
