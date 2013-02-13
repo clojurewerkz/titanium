@@ -166,11 +166,11 @@
     (tg/commit-tx! tx)
     (tg/close g)))
 
-(deftest test-in-transaction-with-just-one-thread
+(deftest test-run-transactionally-with-just-one-thread
   (let [d   (let [p (sio/create-temp-dir)]
               (.deleteOnExit p)
               p)
         g   (tg/open d)]
-    (tg/in-transaction g (fn [tx]
-                           (tg/add-vertex tx {})))
+    (tg/run-transactionally g (fn [tx]
+                                (tg/add-vertex tx {})))
     (tg/close g)))

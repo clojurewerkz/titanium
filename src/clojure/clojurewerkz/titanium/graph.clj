@@ -196,8 +196,8 @@
         (rollback-tx! tx)
         (throw e)))))
 
-(defn in-transaction
-  ""
+(defn run-transactionally
+  "Evaluates provided function in a transaction"
   [^Graph g f]
   (if (supports-transactions? g)
     (perform-transaction g f)
