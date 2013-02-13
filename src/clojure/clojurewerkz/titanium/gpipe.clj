@@ -1,5 +1,5 @@
 (ns clojurewerkz.titanium.gpipe
-  (:refer-clojure :exclude [filter count next])
+  (:refer-clojure :exclude [filter count next dorun doall])
   (:require [clojurewerkz.titanium.conversion :as cnv])
   (:import [com.tinkerpop.blueprints Vertex]
            [com.tinkerpop.gremlin.java GremlinPipeline]
