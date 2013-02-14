@@ -10,7 +10,7 @@
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
   :profiles {:1.3 {:dependencies [[org.clojure/clojure "1.3.0"]]}
-             :1.5 {:dependencies [[org.clojure/clojure "1.5.0-beta10"]]}
+             :1.5 {:dependencies [[org.clojure/clojure "1.5.0-RC16"]]}
              :dev {:resource-paths ["test/resources"]
                    :plugins [[codox "0.6.1"]]
                    :codox {:sources ["src/clojure"]
