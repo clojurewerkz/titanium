@@ -78,10 +78,9 @@ Titanium is built from the ground up for Clojure 1.3.0 and up. The most recent s
 is always recommended.
 
 
-## Continuous Integration Status
+## Continuous Integration
 
-Before Titan developers push a stable release to one of the popular Maven repositories, it is too early to put Titanium on travis-ci.org.
-But after that, we will certainly do it, just like with all other [ClojureWerkz projects](http://clojurewerkz.org).
+[![Continuous Integration status](https://secure.travis-ci.org/clojurewerkz/titanium.png)](http://travis-ci.org/clojurewerkz/titanium)
 
 
 
