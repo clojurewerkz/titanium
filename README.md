@@ -46,7 +46,7 @@ definition to your `pom.xml`:
 
 With Leiningen:
 
-    [clojurewerkz/titanium "1.0.0-alpha1"]
+    [clojurewerkz/titanium "1.0.0-alpha2"]
 
 
 With Maven:
@@ -54,7 +54,7 @@ With Maven:
     <dependency>
       <groupId>clojurewerkz</groupId>
       <artifactId>titanium</artifactId>
-      <version>1.0.0-alpha1</version>
+      <version>1.0.0-alpha2</version>
     </dependency>
 
 
