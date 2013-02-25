@@ -1,3 +1,8 @@
+## Changes between Titanium 1.0.0-alpha2 and 1.0.0-alpha3
+
+No changes yet.
+
+
 ## Changes between Titanium 1.0.0-alpha1 and 1.0.0-alpha2
 
 ### Transaction Control Functions
