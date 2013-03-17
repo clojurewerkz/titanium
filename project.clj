@@ -5,7 +5,10 @@
   :dependencies [[org.clojure/clojure                "1.4.0"]
                  [clojurewerkz/support               "0.14.0"]
                  [com.thinkaurelius.titan/titan      "0.2.0"]
-                 [com.tinkerpop.gremlin/gremlin-java "2.2.0"]]
+                 [com.tinkerpop.gremlin/gremlin-java "2.2.0"]
+                 [net.mikera/clojure-utils "0.1.2"]
+                 [zmaril/ogre "2.2.0.0"]
+                 [zmaril/archimedes "0.0.5"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
@@ -24,4 +27,5 @@
                  "sonatype-snapshots" {:url "http://oss.sonatype.org/content/repositories/snapshots"
                                        :snapshots true
                                        :releases {:checksum :fail :update :always}}}
-  :warn-on-reflection true)
+  ;;  :warn-on-reflection true
+  )
