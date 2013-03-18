@@ -1,6 +1,5 @@
 (ns clojurewerkz.titanium.graph-test
   (:require [clojurewerkz.titanium.graph    :as tg]
-            [clojurewerkz.titanium.elements :as te]
             [clojurewerkz.titanium.edges    :as ted]
             [clojurewerkz.support.io        :as sio])
   (:use clojure.test)
@@ -45,36 +44,36 @@
 (deftest test-getting-property-names
   (let [g  (tg/open-in-memory-graph)
         v  (tg/add-vertex g {:station "Boston Manor" :lines #{"Piccadilly"}})
-        xs (te/property-names v)]
+        xs (ted/keys v)]
     (is (= #{"station" "lines"} xs))))
 
 (deftest test-getting-properties-map
   (let [g  (tg/open-in-memory-graph)
         m  {"station" "Boston Manor" "lines" #{"Piccadilly"}}
         v  (tg/add-vertex g m)
-        m' (te/properties-of v)]
+        m' (ted/to-map v)]
     (is (= m m'))))
 
 (deftest test-getting-vertex-id
   (let [g  (tg/open-in-memory-graph)
         m  {"station" "Boston Manor" "lines" #{"Piccadilly"}}
         v  (tg/add-vertex g m)]
-    (is (te/id-of v))))
+    (is (ted/id-of v))))
 
 (deftest test-associng-properties-map
   (let [g  (tg/open-in-memory-graph)
         m  {"station" "Boston Manor" "lines" #{"Piccadilly"}}
         v  (tg/add-vertex g m)
-        _  (te/assoc! v "opened-in" 1883 "has-wifi?" false)
-        m' (te/properties-of v)]
+        _  (ted/assoc! v "opened-in" 1883 "has-wifi?" false)
+        m' (ted/properties-of v)]
     (is (= (assoc m "opened-in" 1883 "has-wifi?" false) m'))))
 
 (deftest test-dissocing-properties-map
   (let [g  (tg/open-in-memory-graph)
         m  {"station" "Boston Manor" "lines" #{"Piccadilly"}}
         v  (tg/add-vertex g m)
-        _  (te/dissoc! v "lines")
-        m' (te/properties-of v)]
+        _  (ted/dissoc! v "lines")
+        m' (ted/to-map v)]
     (is (= {"station" "Boston Manor"} m'))))
 
 (deftest test-adding-vertices-with-the-same-id-twice
@@ -84,7 +83,7 @@
         v2  (tg/add-vertex g 50 m)]
     ;; Titan seems to be ignoring provided ids, which the Blueprints API
     ;; implementations are allowed to ignore according to the docs. MK.
-    (is (not (= (te/id-of v1) (te/id-of v2))))))
+    (is (not (= (ted/id-of v1) (ted/id-of v2))))))
 
 (deftest test-get-all-vertices
   (let [g  (tg/open-in-memory-graph)
@@ -115,7 +114,7 @@
         v1 (tg/add-vertex g m1)
         v2 (tg/add-vertex g m2)
         e  (tg/add-edge g v1 v2 "links")]
-    (is (= "links" (ted/label-of e)))
+    (is (= :links (ted/label-of e)))
     (is (= v2 (ted/head-vertex e)))
     (is (= v1 (ted/tail-vertex e)))))
 

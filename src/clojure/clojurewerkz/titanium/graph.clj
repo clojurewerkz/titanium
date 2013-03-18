@@ -1,10 +1,11 @@
 (ns clojurewerkz.titanium.graph
-  (:require [clojurewerkz.titanium.elements :as te])
-  (:import [com.thinkaurelius.titan.core TitanFactory TitanGraph]
-           [com.tinkerpop.blueprints Vertex Edge
-            Graph KeyIndexableGraph
-            TransactionalGraph TransactionalGraph$Conclusion]))
+  (:require [mikera.cljutils.namespace :as n])
+  (:import  [com.thinkaurelius.titan.core TitanFactory TitanGraph]
+            [com.tinkerpop.blueprints Vertex Edge
+             Graph KeyIndexableGraph
+             TransactionalGraph TransactionalGraph$Conclusion]))
 
+(ns/pull-all archimedes.core)
 
 ;;
 ;; API
@@ -12,114 +13,35 @@
 
 (defn open-in-memory-graph
   []
-  (TitanFactory/openInMemoryGraph))
+  (set-graph! (TitanFactory/openInMemoryGraph)))
 
 (defprotocol TitaniumGraph
-  (^KeyIndexableGraph open [input] "Opens a new graph")
-  (open? [input] "Returns true if the graph is open (ready to be used)")
-  (close [graph] "Shuts down the given graph"))
+  (^KeyIndexableGraph open [input] "Opens a new graph"))
 
 (extend-protocol TitaniumGraph
   String
   (open [^String path]
-    (TitanFactory/open path))
+    (set-graph! (TitanFactory/open path)))
 
   java.io.File
   (open [^java.io.File f]
-    (TitanFactory/open (.getPath f)))
+    (set-graph! (TitanFactory/open (.getPath f))))
 
   org.apache.commons.configuration.Configuration
   (open [^org.apache.commons.configuration.Configuration conf]
-    (TitanFactory/open conf))
+    (set-graph! (TitanFactory/open conf)))
 
+  ;;TODO: Checkout out convert-config-map in Hermes. Let's you nest
+  ;;things a bit deeper. 
   java.util.Map
   (open [^java.util.Map m]
     (let [bc (org.apache.commons.configuration.BaseConfiguration.)]
       (doseq [[k v] m]
         (.setProperty bc (name k) v))
-      (TitanFactory/open bc)))
+      (set-graph! (TitanFactory/open bc)))))
 
-  com.tinkerpop.blueprints.Graph
-  (close [^Graph g]
-    (.shutdown g))
-
-  TitanGraph
-  (open? [^TitanGraph g]
-    (.isOpen g))
-  (close [^TitanGraph g]
-    (.shutdown g)))
-
-
-;;
-;; Populating
-;;
-
-(defn ^Vertex add-vertex
-  "Adds a vertex to graph"
-  ([^Graph g m]
-     (let [vtx (.addVertex g nil)]
-       (doseq [[k v] m]
-         (.setProperty vtx (name k) v))
-       vtx))
-  ([^Graph g id m]
-     (let [vtx (.addVertex g id)]
-       (doseq [[k v] m]
-         (.setProperty vtx (name k) v))
-       vtx)))
-
-(defn ^Edge add-edge
-  "Adds an edge to graph"
-  ([^Graph g ^Vertex head ^Vertex tail ^String label]
-     (.addEdge g nil head tail label))
-  ([^Graph g ^Vertex head ^Vertex tail ^String label properties]
-     (let [e (.addEdge g nil head tail label)]
-       (te/merge! e properties)
-       e)))
-
-
-;;
-;; Deleting
-;;
-
-(defn remove-vertex
-  "Removes a vertex from graph"
-  [^Graph g ^Vertex el]
-  (.removeVertex g el))
-
-(defn remove-edge
-  "Removes an edge from graph"
-  [^Graph g ^Edge el]
-  (.removeEdge g el))
-
-
-;;
-;; Querying
-;;
-
-(defn ^Vertex get-vertex
-  "Looks up a vertex by id"
-  [^Graph g id]
-  (.getVertex g id))
-
-(defn ^Iterable get-vertices
-  "Returns a sequence of vertices where given key has the provided value"
-  ([^Graph g]
-     (.getVertices g))
-  ([^Graph g k v]
-     (.getVertices g (name k) v)))
-
-(defn ^Edge get-edge
-  "Looks up an edge by id"
-  [^Graph g id]
-  (.getEdge g id))
-
-(defn ^Iterable get-edges
-  "Returns a sequence of edges where given key has the provided value"
-  ([^Graph g]
-     (.getEdges g))
-  ([^Graph g k v]
-     (.getEdges g (name k) v)))
-
+(defn open? []
+  (.isOpen archimedes.core/*graph*))
 
 
 ;;
@@ -164,41 +86,3 @@
   "Returns true if provided graph supports transactions, false otherwise"
   [^Graph g]
   (supports-feature? g "supportsTransactions"))
-
-
-;;
-;; Transactions
-;;
-
-(defn commit-tx!
-  "Commits current transaction"
-  [^TransactionalGraph g]
-  (.stopTransaction g TransactionalGraph$Conclusion/SUCCESS))
-
-(defn rollback-tx!
-  "Rolls back current transaction"
-  [^TransactionalGraph g]
-  (.stopTransaction g TransactionalGraph$Conclusion/FAILURE))
-
-(defn start-tx
-  "Starts a transaction. Only necessary if operations in a transaction
-   will be used across threads."
-  [^TransactionalGraph g]
-  (.startTransaction g))
-
-(defn- perform-transaction
-  [^TransactionalGraph g f]
-  (let [tx (start-tx g)]
-    (try
-      (f tx)
-      (commit-tx! tx)
-      (catch Throwable t
-        (rollback-tx! tx)
-        (throw t)))))
-
-(defn run-transactionally
-  "Evaluates provided function in a transaction"
-  [^Graph g f]
-  (if (supports-transactions? g)
-    (perform-transaction g f)
-    (f g)))
