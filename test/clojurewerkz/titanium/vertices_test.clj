@@ -1,9 +1,81 @@
-;; (ns clojurewerkz.titanium.vertices-test
-;;   (:require [clojurewerkz.titanium.graph    :as tg]
-;;             [clojurewerkz.titanium.elements :as te]
-;;             [clojurewerkz.titanium.indexing :as ti])
-;;   (:use clojure.test))
+(ns clojurewerkz.titanium.vertices-test
+  (:require [clojurewerkz.titanium.graph    :as tg]
+            [clojurewerkz.titanium.vertices :as tv]
+            [clojurewerkz.titanium.edges    :as ted]            
+            [clojurewerkz.titanium.indexing :as ti])
+  (:use clojure.test))
 
+;;
+;; Vertices
+;;
+
+(deftest test-adding-a-vertex
+  (tg/open-in-memory-graph)
+  (let [v (tv/create! {:name "Titanium" :language "Clojure"})]
+    (is (.getId v))
+    (is (= "Titanium" (.getProperty v "name")))))
+
+(deftest test-getting-property-names
+ (tg/open-in-memory-graph)
+  (let [v  (tv/create! {:station "Boston Manor" :lines #{"Piccadilly"}})
+        xs (ted/keys v)]
+    (is (= #{:station :lines} xs))))
+
+(deftest test-getting-properties-map
+ (tg/open-in-memory-graph)
+  (let [m  {:station "Boston Manor" :lines #{"Piccadilly"}}
+        v  (tv/create! m)
+        m' (tv/to-map v)]
+    (is (= (:station m) (:station m')))
+    (is (= (:lines m) (:lines m')))))
+;; (deftest test-getting-vertex-id
+;;   (let [g  (tg/open-in-memory-graph)
+;;         m  {"station" "Boston Manor" "lines" #{"Piccadilly"}}
+;;         v  (tg/add-vertex g m)]
+;;     (is (ted/id-of v))))
+
+;; (deftest test-associng-properties-map
+;;   (let [g  (tg/open-in-memory-graph)
+;;         m  {"station" "Boston Manor" "lines" #{"Piccadilly"}}
+;;         v  (tg/add-vertex g m)
+;;         _  (ted/assoc! v "opened-in" 1883 "has-wifi?" false)
+;;         m' (ted/properties-of v)]
+;;     (is (= (assoc m "opened-in" 1883 "has-wifi?" false) m'))))
+
+;; (deftest test-dissocing-properties-map
+;;   (let [g  (tg/open-in-memory-graph)
+;;         m  {"station" "Boston Manor" "lines" #{"Piccadilly"}}
+;;         v  (tg/add-vertex g m)
+;;         _  (ted/dissoc! v "lines")
+;;         m' (ted/to-map v)]
+;;     (is (= {"station" "Boston Manor"} m'))))
+
+;; (deftest test-adding-vertices-with-the-same-id-twice
+;;   (let [g   (tg/open-in-memory-graph)
+;;         m   {"station" "Boston Manor" "lines" #{"Piccadilly"}}
+;;         v1  (tg/add-vertex g 50 m)
+;;         v2  (tg/add-vertex g 50 m)]
+;;     ;; Titan seems to be ignoring provided ids, which the Blueprints API
+;;     ;; implementations are allowed to ignore according to the docs. MK.
+;;     (is (not (= (ted/id-of v1) (ted/id-of v2))))))
+
+;; (deftest test-get-all-vertices
+;;   (let [g  (tg/open-in-memory-graph)
+;;         m1 {:age 28 :name "Michael"}
+;;         m2 {:age 26 :name "Alex"}
+;;         v1 (tg/add-vertex g m1)
+;;         v2 (tg/add-vertex g m2)
+;;         xs (set (tg/get-vertices g))]
+;;     (is (= #{v1 v2} xs))))
+
+;; (deftest test-get-vertices-by-kv
+;;   (let [g  (tg/open-in-memory-graph)
+;;         m1 {:age 28 :name "Michael"}
+;;         m2 {:age 26 :name "Alex"}
+;;         v1 (tg/add-vertex g m1)
+;;         v2 (tg/add-vertex g m2)
+;;         xs (set (tg/get-vertices g :name "Michael"))]
+;;     (is (= #{v1} xs))))
 
 ;; ;;
 ;; ;; Working with vertices (nodes),

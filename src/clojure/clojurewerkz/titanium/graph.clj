@@ -15,6 +15,15 @@
   []
   (set-graph! (TitanFactory/openInMemoryGraph)))
 
+(defn convert-config-map [m]
+  (let [conf (org.apache.commons.configuration.BaseConfiguration.)]
+    (doseq [[k1 v1] m]
+            (if (string? v1)
+              (.setProperty conf (name k1) v1)
+              (doseq [[k2 v2] v1]
+                (.setProperty conf (str (name k1) "." (name k2)) v2))))
+    conf))
+
 (defprotocol TitaniumGraph
   (^KeyIndexableGraph open [input] "Opens a new graph"))
 
@@ -35,10 +44,7 @@
   ;;things a bit deeper. 
   java.util.Map
   (open [^java.util.Map m]
-    (let [bc (org.apache.commons.configuration.BaseConfiguration.)]
-      (doseq [[k v] m]
-        (.setProperty bc (name k) v))
-      (set-graph! (TitanFactory/open bc)))))
+    (set-graph! (TitanFactory/open (convert-config-map m)))))
 
 (defn open? []
   (.isOpen archimedes.core/*graph*))
