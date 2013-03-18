@@ -5,7 +5,7 @@
              Graph KeyIndexableGraph
              TransactionalGraph TransactionalGraph$Conclusion]))
 
-(ns/pull-all archimedes.core)
+(n/pull-all archimedes.core)
 
 ;;
 ;; API

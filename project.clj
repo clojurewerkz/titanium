@@ -8,7 +8,7 @@
                  [com.tinkerpop.gremlin/gremlin-java "2.2.0"]
                  [net.mikera/clojure-utils "0.1.2"]
                  [zmaril/ogre "2.2.0.0"]
-                 [zmaril/archimedes "0.0.5"]]
+                 [zmaril/archimedes "0.0.6"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
