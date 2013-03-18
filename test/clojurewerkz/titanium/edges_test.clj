@@ -54,34 +54,36 @@
     (is ((set rs2) created))
     (is (empty? rs3))))
 
-;; (deftest test-listing-incoming-relationships-of-a-kind
-;;   (let [g         (tg/open-in-memory-graph)
-;;         from-node (tg/add-vertex g {:url "http://clojurewerkz.org/"})
-;;         to-node   (tg/add-vertex g {:url "http://clojurewerkz.org/about.html"})
-;;         created   (tg/add-edge   g from-node to-node "links" {:since "08 Nov, 2011"})
-;;         rs1       (tv/incoming-edges-of to-node ["links"])
-;;         rs2       (tv/incoming-edges-of to-node ["likes"])]
-;;     (is ((set rs1) created))
-;;     (is (empty? rs2))))
+(deftest test-listing-incoming-relationships-of-a-kind
+  (tg/open-in-memory-graph)
+  (let [from-node (tv/create! {:url "http://clojurewerkz.org/"})
+        to-node   (tv/create! {:url "http://clojurewerkz.org/about.html"})
+        created   (te/connect! from-node :links to-node  {:since "08 Nov, 2011"})
+        rs1       (tv/incoming-edges-of to-node :links)
+        rs2       (tv/incoming-edges-of to-node :linkes)
+        rs3       (tv/all-edges-of to-node   :knows)]
+    (is ((set rs1) created))
+    (is (empty? rs2))))
 
-;; (deftest test-listing-outgoing-relationships-of-a-kind
-;;   (let [g         (tg/open-in-memory-graph)
-;;         from-node (tg/add-vertex g {:url "http://clojurewerkz.org/"})
-;;         to-node   (tg/add-vertex g {:url "http://clojurewerkz.org/about.html"})
-;;         created   (tg/add-edge   g from-node to-node "links" {:since "08 Nov, 2011"})
-;;         rs1       (tv/outgoing-edges-of from-node ["links"])
-;;         rs2       (tv/outgoing-edges-of from-node ["likes"])]
-;;     (is ((set rs1) created))
-;;     (is (empty? rs2))))
+(deftest test-listing-incoming-relationships-of-a-kind
+  (tg/open-in-memory-graph)
+  (let [from-node (tv/create! {:url "http://clojurewerkz.org/"})
+        to-node   (tv/create! {:url "http://clojurewerkz.org/about.html"})
+        created   (te/connect! from-node :links to-node  {:since "08 Nov, 2011"})
+        rs1       (tv/outgoing-edges-of from-node :links)
+        rs2       (tv/outgoing-edges-of from-node :linkes)
+        rs3       (tv/all-edges-of to-node   :knows)]
+    (is ((set rs1) created))
+    (is (empty? rs2))))
 
-;; (deftest test-updating-relationship-properties
-;;   (let [g         (tg/open-in-memory-graph)
-;;         from-node (tg/add-vertex g {:url "http://clojurewerkz.org/"})
-;;         to-node   (tg/add-vertex g {:url "http://clojurewerkz.org/about.html"})
-;;         edge      (tg/add-edge   g from-node to-node "links" {:since "08 Nov, 2011"})
-;;         edge'     (te/assoc! edge :since "04 Nov, 2011")]
-;;     (is (= edge edge'))
-;;     (is (= (te/properties-of edge) {"since" "04 Nov, 2011"}))))
+(deftest test-updating-relationship-properties
+  (tg/open-in-memory-graph)
+  (let [from-node (tv/create! {:url "http://clojurewerkz.org/"})
+        to-node   (tv/create! {:url "http://clojurewerkz.org/about.html"})
+        edge      (te/connect! from-node :links to-node {:since "08 Nov, 2011"})
+        edge'     (te/assoc! edge :since "04 Nov, 2011")]
+    (is (= edge edge'))
+    (is (= (:since (te/to-map edge)) "04 Nov, 2011"))))
 
 ;; ;; TODO: add multiple edges at once
 ;; ;; TODO maybe-add-edge
