@@ -2,7 +2,8 @@
   (:require [clojurewerkz.titanium.graph    :as tg]
             [clojurewerkz.titanium.vertices :as tv]
             [clojurewerkz.titanium.edges    :as ted]            
-            [clojurewerkz.titanium.indexing :as ti])
+            [clojurewerkz.titanium.indexing :as ti]
+            [clojurewerkz.titanium.types    :as tt])
   (:use clojure.test))
 
 ;;
@@ -52,141 +53,133 @@
     (ted/dissoc! v "lines")
     (is (= {:station "Boston Manor"} (dissoc (tv/to-map v) :__id__)))))
 
-;; (deftest test-adding-vertices-with-the-same-id-twice
-;;   (let [g   (tg/open-in-memory-graph)
-;;         m   {"station" "Boston Manor" "lines" #{"Piccadilly"}}
-;;         v1  (tg/add-vertex g 50 m)
-;;         v2  (tg/add-vertex g 50 m)]
-;;     ;; Titan seems to be ignoring provided ids, which the Blueprints API
-;;     ;; implementations are allowed to ignore according to the docs. MK.
-;;     (is (not (= (ted/id-of v1) (ted/id-of v2))))))
+(deftest test-adding-vertices-with-the-same-id-twice
+  (tg/open-in-memory-graph)
+  (let [m  {:station "Boston Manor" :lines #{"Piccadilly"}}
+        v1 (tv/create-with-id! 50 m)
+        v2 (tv/create-with-id! 50 m)]
+    ;; Titan seems to be ignoring provided ids, which the Blueprints API
+    ;; implementations are allowed to ignore according to the docs. MK.
+    (is (not (= (ted/id-of v1) (ted/id-of v2))))))
 
-;; (deftest test-get-all-vertices
-;;   (let [g  (tg/open-in-memory-graph)
-;;         m1 {:age 28 :name "Michael"}
-;;         m2 {:age 26 :name "Alex"}
-;;         v1 (tg/add-vertex g m1)
-;;         v2 (tg/add-vertex g m2)
-;;         xs (set (tg/get-vertices g))]
-;;     (is (= #{v1 v2} xs))))
+(deftest test-get-all-vertices
+  (tg/open-in-memory-graph)
+  (let [v1 (tv/create! {:age 28 :name "Michael"})
+        v2 (tv/create! {:age 26 :name "Alex"})        
+        xs (set (tv/get-all-vertices))]
+    (is (= #{v1 v2} xs))))
 
-;; (deftest test-get-vertices-by-kv
-;;   (let [g  (tg/open-in-memory-graph)
-;;         m1 {:age 28 :name "Michael"}
-;;         m2 {:age 26 :name "Alex"}
-;;         v1 (tg/add-vertex g m1)
-;;         v2 (tg/add-vertex g m2)
-;;         xs (set (tg/get-vertices g :name "Michael"))]
-;;     (is (= #{v1} xs))))
-
-;; ;;
-;; ;; Working with vertices (nodes),
-;; ;; heavily inspired by the Neocons test suite
-;; ;;
-
-;; (deftest test-creating-and-immediately-accessing-a-node-without-properties
-;;   (let [g       (tg/open-in-memory-graph)
-;;         m       {}
-;;         created (tg/add-vertex g m)
-;;         fetched (tg/get-vertex g (te/id-of created))]
-;;     (is (= (te/id-of created) (te/id-of fetched)))
-;;     (is (= (te/properties-of created) (te/properties-of fetched)))))
+(deftest test-find-vertices-by-kv
+  (tg/open-in-memory-graph)
+  (let [v1 (tv/create! {:age 28 :name "Michael"})
+        v2 (tv/create! {:age 26 :name "Alex"})        
+        xs (set (tv/find-by-kv :name "Michael"))]
+    (is (= #{v1} xs))))
 
 
-;; (deftest test-creating-and-immediately-accessing-a-node-with-properties
-;;   (let [g       (tg/open-in-memory-graph)
-;;         m       {:key "value"}
-;;         created (tg/add-vertex g m)
-;;         fetched (tg/get-vertex g (te/id-of created))]
-;;     (is (= (te/id-of created) (te/id-of fetched)))
-;;     (is (= (te/properties-of created) (te/properties-of fetched)))))
+;;
+;; Working with vertices (nodes),
+;; heavily inspired by the Neocons test suite
+;;
 
+(deftest test-creating-and-immediately-accessing-a-node-without-properties
+  (tg/open-in-memory-graph)
+  (let [created (tv/create! {})
+        fetched (tv/find-by-id (tv/id-of created))]
+    (is (= (tv/id-of created) (tv/id-of fetched)))
+    (is (= (tv/to-map created) (tv/to-map fetched)))))
+
+
+(deftest test-creating-and-immediately-accessing-a-node-with-properties
+  (tg/open-in-memory-graph)
+  (let [created (tv/create! {:key "value"})
+        fetched (tv/find-by-id (tv/id-of created))]
+    (is (= (tv/id-of created) (tv/id-of fetched)))
+    (is (= (tv/to-map created) (tv/to-map fetched)))))
+
+;;Use Titan types for this. 
 ;; (deftest test-creating-and-immediately-accessing-a-node-via-key-index
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :value "test"}
-;;         _        (tg/index-vertices-by-key! g "name")
-;;         created  (tg/add-vertex g data)
-;;         fetched1 (tg/get-vertices g "name" "Gerard")
-;;         fetched2 (tg/get-vertices g "name" "Roger")]
+;;   (tg/open-in-memory-graph)
+;;   (tt/index-vertices-by-key! "name")
+;;   (let [created  (tv/create! data {:name "Gerard" :value "test"})
+;;         fetched1 (tg/find-by-kv :name "Gerard")
+;;         fetched2 (tg/find-by-kv :name "Roger")]
 ;;     (is (= (first fetched1) created))
 ;;     (is (empty? fetched2))))
 
-;; (deftest test-accessing-a-non-existent-node
-;;   (let [g    (tg/open-in-memory-graph)
-;;         v    (tg/get-vertex g 12388888888)]
-;;     (is (nil? v))))
+(deftest test-accessing-a-non-existent-node
+  (tg/open-in-memory-graph)
+  (is (nil? (tv/find-by-id 12388888888))))
 
-;; (deftest test-creating-and-deleting-a-node-with-properties
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :value "test"}
-;;         v        (tg/add-vertex g data)
-;;         id       (te/id-of v)]
-;;     (tg/remove-vertex g v)
-;;     (is (nil? (tg/get-vertex g id)))))
+(deftest test-creating-and-deleting-a-node-with-properties
+  (tg/open-in-memory-graph)
+  (let [v        (tv/create! {:name "Gerard" :value "test"})
+        id       (tv/id-of v)]
+    (tv/delete! v)
+    (is (nil? (tv/find-by-id id)))))
 
-;; (deftest test-accessing-node-properties
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :age 30}
-;;         v        (tg/add-vertex g data)]
-;;     (is (= {"name" "Gerard" "age" 30} (te/properties-of v)))
-;;     (is (= data (te/properties-of v true)))
-;;     (are [k val] (is (= val (te/property-of v k)))
-;;          :name "Gerard" :age 30)))
+(deftest test-accessing-node-properties
+  (tg/open-in-memory-graph)
+  (let [data {:name "Gerard" :age 30}
+        v        (tv/create! data)]
+    (is (= data (dissoc (tv/to-map v) :__id__)))
+    (are [k val] (is (= val (tv/get v k)))
+         :name "Gerard" :age 30)))
 
-;; (deftest test-associng-node-properties
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :age 30}
-;;         v        (tg/add-vertex g data)
-;;         ;; just like transients, this modifies in place, but we
-;;         ;; also test the return value
-;;         v'       (te/assoc! v :age 31)]
-;;     (is (= v v'))
-;;     (is (= {"name" "Gerard" "age" 31} (te/properties-of v)))
-;;     (are [k val] (is (= val (te/property-of v k)))
-;;          :name "Gerard" :age 31)))
+(deftest test-associng-node-properties
+  (let [g        (tg/open-in-memory-graph)
+        data     {:name "Gerard" :age 30}
+        v        (tv/create! data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (tv/assoc! v :age 31)]
+    (is (= v v'))
+    (is (= {:name "Gerard" :age 31} (dissoc (tv/to-map v) :__id__)))
+    (are [k val] (is (= val (tv/get v k)))
+         :name "Gerard" :age 31)))
 
 ;; (deftest test-mutating-node-properties-with-fn
 ;;   (let [g        (tg/open-in-memory-graph)
 ;;         data     {:name "Gerard" :age 30}
-;;         v        (tg/add-vertex g data)
+;;         v        (tv/create! data)
 ;;         ;; just like transients, this modifies in place, but we
 ;;         ;; also test the return value
-;;         v'       (te/mutate-with! v :age inc)]
+;;         v'       (tv/mutate-with! v :age inc)]
 ;;     (is (= v v'))
-;;     (is (= {"name" "Gerard" "age" 31} (te/properties-of v)))
-;;     (are [k val] (is (= val (te/property-of v k)))
+;;     (is (= {"name" "Gerard" "age" 31} (tv/to-map v)))
+;;     (are [k val] (is (= val (tv/get v k)))
 ;;          :name "Gerard" :age 31)))
 
 ;; (deftest test-merging-node-properties-with-a-single-map
 ;;   (let [g        (tg/open-in-memory-graph)
 ;;         data     {:name "Gerard" :age 30}
-;;         v        (tg/add-vertex g data)
+;;         v        (tv/create! data)
 ;;         ;; just like transients, this modifies in place, but we
 ;;         ;; also test the return value
-;;         v'       (te/merge! v {:age 31})]
+;;         v'       (tv/merge! v {:age 31})]
 ;;     (is (= v v'))
-;;     (is (= {"name" "Gerard" "age" 31} (te/properties-of v)))
-;;     (are [k val] (is (= val (te/property-of v k)))
+;;     (is (= {"name" "Gerard" "age" 31} (tv/to-map v)))
+;;     (are [k val] (is (= val (tv/get v k)))
 ;;          :name "Gerard" :age 31)))
 
 ;; (deftest test-merging-node-properties-with-multiple-maps
 ;;   (let [g        (tg/open-in-memory-graph)
 ;;         data     {:name "Gerard" :age 30}
-;;         v        (tg/add-vertex g data)
+;;         v        (tv/create! data)
 ;;         ;; just like transients, this modifies in place, but we
 ;;         ;; also test the return value
-;;         v'       (te/merge! v {:age 31} {:position "Industrial Designer"})]
+;;         v'       (tv/merge! v {:age 31} {:position "Industrial Designer"})]
 ;;     (is (= v v'))
-;;     (is (= {"name" "Gerard" "age" 31 "position" "Industrial Designer"} (te/properties-of v)))
-;;     (are [k val] (is (= val (te/property-of v k)))
+;;     (is (= {"name" "Gerard" "age" 31 "position" "Industrial Designer"} (tv/to-map v)))
+;;     (are [k val] (is (= val (tv/get v k)))
 ;;          :name "Gerard" :age 31)))
 
 ;; (deftest test-clearing-node-properties
 ;;   (let [g        (tg/open-in-memory-graph)
 ;;         data     {:name "Gerard" :age 30}
-;;         v        (tg/add-vertex g data)
+;;         v        (tv/create! data)
 ;;         ;; just like transients, this modifies in place, but we
 ;;         ;; also test the return value
-;;         v'       (te/clear! v)]
+;;         v'       (tv/clear! v)]
 ;;     (is (= v v'))
-;;     (is (= {} (te/properties-of v)))))
+;;     (is (= {} (tv/to-map v)))))
