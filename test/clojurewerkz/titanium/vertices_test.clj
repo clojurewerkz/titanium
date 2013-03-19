@@ -138,48 +138,48 @@
     (are [k val] (is (= val (tv/get v k)))
          :name "Gerard" :age 31)))
 
-;; (deftest test-mutating-node-properties-with-fn
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :age 30}
-;;         v        (tv/create! data)
-;;         ;; just like transients, this modifies in place, but we
-;;         ;; also test the return value
-;;         v'       (tv/mutate-with! v :age inc)]
-;;     (is (= v v'))
-;;     (is (= {"name" "Gerard" "age" 31} (tv/to-map v)))
-;;     (are [k val] (is (= val (tv/get v k)))
-;;          :name "Gerard" :age 31)))
+(deftest test-mutating-node-properties-with-fn
+  (tg/open-in-memory-graph)
+  (let [data     {:name "Gerard" :age 30}
+        v        (tv/create! data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (tv/update! v :age inc)]
+    (is (= v v'))
+    (is (= {:name "Gerard" :age 31} (dissoc (tv/to-map v) :__id__)))
+    (are [k val] (is (= val (tv/get v k)))
+         :name "Gerard" :age 31)))
 
-;; (deftest test-merging-node-properties-with-a-single-map
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :age 30}
-;;         v        (tv/create! data)
-;;         ;; just like transients, this modifies in place, but we
-;;         ;; also test the return value
-;;         v'       (tv/merge! v {:age 31})]
-;;     (is (= v v'))
-;;     (is (= {"name" "Gerard" "age" 31} (tv/to-map v)))
-;;     (are [k val] (is (= val (tv/get v k)))
-;;          :name "Gerard" :age 31)))
+(deftest test-merging-node-properties-with-a-single-map
+  (tg/open-in-memory-graph)
+  (let [data     {:name "Gerard" :age 30}
+        v        (tv/create! data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (tv/merge! v {:age 31})]
+    (is (= v v'))
+    (is (= {:name "Gerard" :age 31} (dissoc (tv/to-map v) :__id__)))
+    (are [k val] (is (= val (tv/get v k)))
+         :name "Gerard" :age 31)))
 
-;; (deftest test-merging-node-properties-with-multiple-maps
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :age 30}
-;;         v        (tv/create! data)
-;;         ;; just like transients, this modifies in place, but we
-;;         ;; also test the return value
-;;         v'       (tv/merge! v {:age 31} {:position "Industrial Designer"})]
-;;     (is (= v v'))
-;;     (is (= {"name" "Gerard" "age" 31 "position" "Industrial Designer"} (tv/to-map v)))
-;;     (are [k val] (is (= val (tv/get v k)))
-;;          :name "Gerard" :age 31)))
+(deftest test-merging-node-properties-with-multiple-maps
+  (tg/open-in-memory-graph)
+  (let [data     {:name "Gerard" :age 30}
+        v        (tv/create! data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (tv/merge! v {:age 31} {:position "Industrial Designer"})]
+    (is (= v v'))
+    (is (= {:name "Gerard" :age 31 :position "Industrial Designer"} (dissoc (tv/to-map v) :__id__)))
+    (are [k val] (is (= val (tv/get v k)))
+         :name "Gerard" :age 31)))
 
-;; (deftest test-clearing-node-properties
-;;   (let [g        (tg/open-in-memory-graph)
-;;         data     {:name "Gerard" :age 30}
-;;         v        (tv/create! data)
-;;         ;; just like transients, this modifies in place, but we
-;;         ;; also test the return value
-;;         v'       (tv/clear! v)]
-;;     (is (= v v'))
-;;     (is (= {} (tv/to-map v)))))
+(deftest test-clearing-node-properties
+  (tg/open-in-memory-graph)
+  (let [data     {:name "Gerard" :age 30}
+        v        (tv/create! data)
+        ;; just like transients, this modifies in place, but we
+        ;; also test the return value
+        v'       (tv/clear! v)]
+    (is (= v v'))
+    (is (= {} (dissoc (tv/to-map v) :__id__)))))
