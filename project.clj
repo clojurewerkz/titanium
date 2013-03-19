@@ -6,7 +6,6 @@
                  [clojurewerkz/support               "0.14.0"]
                  [com.thinkaurelius.titan/titan      "0.2.0"]
                  [com.tinkerpop.gremlin/gremlin-java "2.2.0"]
-                 [net.mikera/clojure-utils "0.1.2"]
                  [potemkin "0.2.0"]
                  [zmaril/ogre "2.2.0.0"]
                  [zmaril/archimedes "0.1.0"]]

@@ -1,6 +1,5 @@
 (ns clojurewerkz.titanium.types
-  (:import (com.thinkaurelius.titan.core TypeGroup
-                                         TitanType))
+  (:import (com.thinkaurelius.titan.core TypeGroup TitanType))
   (:use [archimedes.core :only (*graph* *pre-fn*)]))
 
 (defn get-type [tname]
