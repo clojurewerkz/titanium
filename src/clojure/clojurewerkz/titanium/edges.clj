@@ -1,7 +1,14 @@
 (ns clojurewerkz.titanium.edges
   (:refer-clojure :exclude [keys vals assoc! dissoc! get find])
   (:require [potemkin :as po]
-            [archimedes.edge :as edge]))
+            [archimedes.edge :as edge]
+            [clojurewerkz.titanium.elements :as elem]))
+
+;;Titan elements
+(po/import-fn elem/new?)
+(po/import-fn elem/loaded?)
+(po/import-fn elem/modified?)
+(po/import-fn elem/removed?)
 
 ;;Tinkerpop elements 
 (po/import-fn edge/get)

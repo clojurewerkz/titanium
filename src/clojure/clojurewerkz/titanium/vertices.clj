@@ -1,7 +1,14 @@
 (ns clojurewerkz.titanium.vertices
   (:refer-clojure :exclude [keys vals assoc! dissoc! get find])
   (:require [potemkin :as po]
-            [archimedes.vertex :as vertex]))
+            [archimedes.vertex :as vertex]
+            [clojurewerkz.titanium.elements :as elem]))
+
+;;Titan elements
+(po/import-fn elem/new?)
+(po/import-fn elem/loaded?)
+(po/import-fn elem/modified?)
+(po/import-fn elem/removed?)
 
 ;;Tinkerpop elements 
 (po/import-fn vertex/get)
@@ -18,11 +25,9 @@
 (po/import-fn vertex/refresh)
 (po/import-fn vertex/delete!)
 (po/import-fn vertex/to-map)
-
 (po/import-fn vertex/find-by-id)
 (po/import-fn vertex/find-by-kv)
 (po/import-fn vertex/get-all-vertices)
-
 (po/import-fn vertex/edges-of)
 (po/import-fn vertex/all-edges-of)
 (po/import-fn vertex/outgoing-edges-of)
@@ -31,7 +36,6 @@
 (po/import-fn vertex/connected-out-vertices)
 (po/import-fn vertex/connected-in-vertices)
 (po/import-fn vertex/all-connected-vertices)
-
 (po/import-fn vertex/create!)
 (po/import-fn vertex/upsert!)
 (po/import-fn vertex/unique-upsert!)
