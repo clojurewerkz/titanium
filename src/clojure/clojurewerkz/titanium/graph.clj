@@ -1,15 +1,28 @@
 (ns clojurewerkz.titanium.graph
-  (:require [mikera.cljutils.namespace :as n])
+  (:require [mikera.cljutils.namespace :as n]
+            [archimedes.core :as g])
   (:import  [com.thinkaurelius.titan.core TitanFactory TitanGraph]
             [com.tinkerpop.blueprints Vertex Edge
              Graph KeyIndexableGraph
-             TransactionalGraph TransactionalGraph$Conclusion]))
+             TransactionalGraph TransactionalGraph$Conclusion]
+            [com.thinkaurelius.titan.graphdb.blueprints TitanInMemoryBlueprintsGraph]
+            [com.thinkaurelius.titan.graphdb.transaction StandardPersistTitanTx]))
 
 (n/pull-all archimedes.core)
 
 ;;
 ;; API
 ;;
+(defn ensure-graph-is-transaction-safe
+  "Ensure that we are either in a transaction or using an in-memory graph."
+  []
+  (when-not (#{TitanInMemoryBlueprintsGraph StandardPersistTitanTx}
+              (type g/*graph*))
+    (throw
+      (Throwable.
+       "All actions on a persistent graph must be wrapped in transact! "))))
+
+(set-pre-fn! ensure-graph-is-transaction-safe)
 
 (defn open-in-memory-graph
   []
