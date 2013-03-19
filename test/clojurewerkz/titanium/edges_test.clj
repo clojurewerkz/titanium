@@ -3,7 +3,8 @@
             [clojurewerkz.titanium.indexing :as ti]
             [clojurewerkz.titanium.vertices :as tv]
             [clojurewerkz.titanium.edges    :as ted])
-  (:use clojure.test))
+  (:use clojure.test
+        [clojurewerkz.titanium.conf :only (clear-db conf)]))
 
 
 (deftest test-creating-and-immediately-finding-a-relationship-without-properties
@@ -111,3 +112,124 @@
 ;;            m2 {"station" "Northfields"  "lines" #{"Piccadilly"}}]
 ;;        (tg/populate g
 ;;                     (m1 -links-> m2))))
+
+(deftest test-edges
+  (clear-db)
+  (tg/open conf)
+
+  (testing "Edge deletion"
+    (tg/transact!
+     (let [u (tv/create!)
+           w (tv/create!)
+           a (ted/connect! u :test w)
+           a-id (ted/id-of a)]
+       (ted/delete! a)
+       (is (=  nil (ted/find-by-id a-id))))))
+
+  (testing "Single property mutation"
+    (tg/transact!
+     (let [v1 (tv/create! {:name "v1"})
+           v2 (tv/create! {:name "v2"})
+           edge (ted/connect! v1 :test v2 {:a 1})]
+       (ted/assoc! edge :b 2)
+       (ted/dissoc! edge :a)
+       (is (= 2   (ted/get edge :b)))
+       (is (= nil (ted/get edge :a))))))
+
+  (testing "Multiple property mutation"
+    (tg/transact!
+     (let [v1 (tv/create! {:name "v1"})
+           v2 (tv/create! {:name "v2"})
+           edge (ted/connect! v1 :test v2 {:a 0})]
+       (ted/merge! edge {:a 1 :b 2 :c 3})
+       (is (= 1 (ted/get edge :a)))
+       (is (= 2 (ted/get edge :b)))
+       (is (= 3 (ted/get edge :c))))))
+
+  (testing "Property map"
+    (tg/transact!
+     (let [v1 (tv/create! {:name "v1"})
+           v2 (tv/create! {:name "v2"})
+           edge (ted/connect! v1 :test v2 {:a 1 :b 2 :c 3})
+           prop-map (ted/to-map edge)]
+       (is (= {:a 1 :b 2 :c 3} (dissoc prop-map :__id__ :__label__))))))
+
+  (testing "Endpoints"
+    (tg/transact!
+     (let [v1 (tv/create! {:name "v1"})
+           v2 (tv/create! {:name "v2"})
+           edge (ted/connect! v1 :connexion v2)]
+       (is (= ["v1" "v2"] (map #(ted/get % :name) (ted/endpoints edge)))))))
+
+  (testing "Refresh"
+    (let [v1 (tg/transact! (tv/create! {:name "v1"}))
+          v2 (tg/transact! (tv/create! {:name "v2"}))
+          edge (tg/transact! (ted/connect! (tv/refresh v1) :connexion (tv/refresh v2)))
+          fresh-edge (tg/transact! (ted/refresh edge))]
+      (is fresh-edge)
+      (is (tg/transact! (= (.getId (ted/refresh edge)) (.getId (ted/refresh fresh-edge)))))
+      (is (tg/transact! (= (ted/to-map (ted/refresh edge)) (ted/to-map (ted/refresh fresh-edge)))))))
+
+  (testing "Edges between"
+    (let [v1 (tg/transact! (tv/create! {:name "v1"}))
+          v2 (tg/transact! (tv/create! {:name "v2"}))
+          edge (tg/transact! (ted/connect! (tv/refresh v1) :connexion (tv/refresh v2)))
+          found-edges (tg/transact! (ted/edges-between (tv/refresh v1) (tv/refresh v2)))]
+      (is edge)
+      (is (tg/transact! (= (ted/to-map (ted/refresh edge))
+                          (ted/to-map (ted/refresh (first found-edges))))))))
+  
+  (testing "Upconnect!"
+    (testing "Upconnecting once"
+      (tg/transact!
+       (let [v1 (tv/create! {:name "v1"})
+             v2 (tv/create! {:name "v2"})
+             edge (first (ted/upconnect! v1 :connexion v2 {:prop "the edge"}))]
+         (is (ted/connected? v1 v2))
+         (is (ted/connected? v1 :connexion v2))
+         (is (not (ted/connected? v2 v1)))
+         (is (= "the edge" (ted/get edge :prop))))))
+
+    (testing "Upconnecting multiple times"
+      (tg/transact!
+       (let [v1 (tv/create! {:name "v1"})
+             v2 (tv/create! {:name "v2"})
+             edge (first (ted/upconnect! v1 :connexion v2 {:prop "the edge"}))
+             edge (first (ted/upconnect! v1 :connexion v2 {:a 1 :b 2}))
+             edge (first (ted/upconnect! v1 :connexion v2 {:b 0}))]
+         (is (ted/connected? v1 v2))
+         (is (ted/connected? v1 :connexion v2))
+         (is (not (ted/connected? v2 v1)))
+         (is (= "the edge" (ted/get edge :prop)))
+         (is (= 1 (ted/get edge :a)))
+         (is (= 0 (ted/get edge :b)))))))
+
+  (testing "unique-upconnect!"
+    (testing "Once"
+      (tg/transact!
+       (let [v1 (tv/create! {:name "v1"})
+             v2 (tv/create! {:name "v2"})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:prop "the edge"})]
+         (is (ted/connected? v1 v2))
+         (is (ted/connected? v1 :connexion v2))
+         (is (not (ted/connected? v2 v1)))
+         (is (= "the edge" (ted/get edge :prop))))))
+
+    (testing "Multiple times"
+      (tg/transact!
+       (let [v1 (tv/create! {:name "v1"})
+             v2 (tv/create! {:name "v2"})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:prop "the edge"})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:a 1 :b 2})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:b 0})]
+         (is (ted/connected? v1 v2))
+         (is (ted/connected? v1 :connexion v2))
+         (is (not (ted/connected? v2 v1)))
+         (is (= "the edge" (ted/get edge :prop)))
+         (is (= 1 (ted/get edge :a)))
+         (is (= 0 (ted/get edge :b)))
+         (ted/connect! v1 :connexion v2)
+         (is (thrown? Throwable #"There were 2 vertices returned."
+                      (ted/unique-upconnect! v1 :connexion v2)))))))
+  (tg/shutdown)
+  (clear-db))
