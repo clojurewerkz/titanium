@@ -54,15 +54,6 @@
     (ted/dissoc! v "lines")
     (is (= {:station "Boston Manor"} (dissoc (tv/to-map v) :__id__)))))
 
-(deftest test-adding-vertices-with-the-same-id-twice
-  (tg/open-in-memory-graph)
-  (let [m  {:station "Boston Manor" :lines #{"Piccadilly"}}
-        v1 (tv/create-with-id! 50 m)
-        v2 (tv/create-with-id! 50 m)]
-    ;; Titan seems to be ignoring provided ids, which the Blueprints API
-    ;; implementations are allowed to ignore according to the docs. MK.
-    (is (not (= (ted/id-of v1) (ted/id-of v2))))))
-
 (deftest test-get-all-vertices
   (tg/open-in-memory-graph)
   (let [v1 (tv/create! {:age 28 :name "Michael"})
