@@ -1,6 +1,14 @@
 ## Changes between Titanium 1.0.0-alpha2 and 1.0.0-alpha3
 
-No changes yet.
+*Major breaking changes for almost everything* 
+
+Titanium has been completely overhauled to depend on
+[Archimedes](https://github.com/zmaril/archimedes) and
+[Ogre](https://github.com/zmaril/ogre). For more details, see this
+[Github issue thread](https://github.com/clojurewerkz/titanium/issues/1)
+about the philosophy and efforts behind the switch. Documentation will
+be forthcoming, most likely after Titanium has been updated to use
+Titan 0.3.0.
 
 
 ## Changes between Titanium 1.0.0-alpha1 and 1.0.0-alpha2
