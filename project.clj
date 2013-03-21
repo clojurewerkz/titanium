@@ -2,8 +2,8 @@
   :description "Titanium a powerful Clojure graph library build on top of Aurelius Titan"
   :url "http://titanium.clojurewerkz.org"
   :license {:name "Eclipse Public License"}
-  :dependencies [[org.clojure/clojure                "1.4.0"]
-                 [clojurewerkz/support               "0.14.0"]
+  :dependencies [[org.clojure/clojure                "1.5.1"]
+                 [clojurewerkz/support               "0.15.0"]
                  [com.thinkaurelius.titan/titan      "0.2.0"]
                  [com.tinkerpop.gremlin/gremlin-java "2.2.0"]
                  [potemkin "0.2.0"]
@@ -13,14 +13,13 @@
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
   :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
-             :1.5 {:dependencies [[org.clojure/clojure "1.5.0"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
              :master {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
              :dev {:resource-paths ["test/resources"]
                    :plugins [[codox "0.6.1"]]
                    :codox {:sources ["src/clojure"]
                            :output-dir "doc/api"}}}
-  :aliases {"all" ["with-profile" "dev,1.4:dev,1.5:dev,1.6:dev,master"]}
+  :aliases {"all" ["with-profile" "dev,1.4:dev,1.6:dev,master"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail}}
