@@ -56,9 +56,7 @@
                       (g/--E> :battled)
                       (g/has :times > 1)
                       (g/in-vertex)
-                      g/count)
-          ;;TODO: count should have a bang.
-          ;;Error in ogre. Simple fix for the next release. 
+                      g/count!)
           r4 (g/query pluto
                       (g/--> :lives)
                       (g/<-- :lives)
