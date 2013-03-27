@@ -8,13 +8,13 @@
             [com.thinkaurelius.titan.graphdb.blueprints TitanInMemoryBlueprintsGraph]
             [com.thinkaurelius.titan.graphdb.transaction StandardPersistTitanTx]))
 
+(po/import-fn g/get-graph)
 (po/import-fn g/shutdown)
 (po/import-fn g/get-feature)
 (po/import-fn g/get-features)
 (po/import-macro g/transact!)
 (po/import-macro g/retry-transact!)
 (po/import-macro g/with-graph)
-
 
 ;;
 ;; API
