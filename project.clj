@@ -1,4 +1,4 @@
-(defproject clojurewerkz/titanium "1.0.0-alpha3"
+(defproject clojurewerkz/titanium "1.0.0-alpha4-SNAPSHOT"
   :description "Titanium a powerful Clojure graph library build on top of Aurelius Titan"
   :url "http://titanium.clojurewerkz.org"
   :license {:name "Eclipse Public License"}
