@@ -5,8 +5,7 @@
             [com.tinkerpop.blueprints Vertex Edge
              Graph KeyIndexableGraph
              TransactionalGraph TransactionalGraph$Conclusion]
-            [com.thinkaurelius.titan.graphdb.blueprints TitanInMemoryBlueprintsGraph]
-            [com.thinkaurelius.titan.graphdb.transaction StandardPersistTitanTx]))
+            [com.thinkaurelius.titan.core TitanTransaction]))
 
 (po/import-fn g/get-graph)
 (po/import-fn g/shutdown)
@@ -22,17 +21,12 @@
 (defn ensure-graph-is-transaction-safe
   "Ensure that we are either in a transaction or using an in-memory graph."
   []
-  (when-not (#{TitanInMemoryBlueprintsGraph StandardPersistTitanTx}
-              (type g/*graph*))
+  (when-not (instance? TitanTransaction (get-graph))
     (throw
       (Throwable.
        "All actions on a persistent graph must be wrapped in transact! "))))
 
 (g/set-pre-fn! ensure-graph-is-transaction-safe)
-
-(defn open-in-memory-graph
-  []
-  (g/set-graph! (TitanFactory/openInMemoryGraph)))
 
 (defn convert-config-map [m]
   (let [conf (org.apache.commons.configuration.BaseConfiguration.)]

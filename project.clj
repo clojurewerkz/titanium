@@ -4,7 +4,7 @@
   :license {:name "Eclipse Public License"}
   :dependencies [[org.clojure/clojure                "1.5.1"]
                  [clojurewerkz/support               "0.15.0"]
-                 [com.thinkaurelius.titan/titan-all  "0.2.1"]
+                 [com.thinkaurelius.titan/titan-all  "0.3.0"]
                  [potemkin "0.2.0"]
                  [zmaril/ogre "2.3.0.0"]
                  [zmaril/archimedes "1.0.0-alpha2"]]
