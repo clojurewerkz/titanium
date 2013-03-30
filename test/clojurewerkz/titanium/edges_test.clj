@@ -202,36 +202,37 @@
        (is (not (ted/connected? v2 v1)))
        (is (= "the edge" (ted/get edge :prop)))
        (is (= 1 (ted/get edge :a)))
-       (is (= 0 (ted/get edge :b)))))))
+       (is (= 0 (ted/get edge :b))))))
+  (testing "unique-upconnect!"
+    (testing "Once"
+      (tg/transact!
+       (let [v1 (tv/create! {:name "v1"})
+             v2 (tv/create! {:name "v2"})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:prop "the edge"})]
+         (is (ted/connected? v1 v2))
+         (is (ted/connected? v1 :connexion v2))
+         (is (not (ted/connected? v2 v1)))
+         (is (= "the edge" (ted/get edge :prop))))))
 
-(testing "unique-upconnect!"
-  (testing "Once"
-    (tg/transact!
-     (let [v1 (tv/create! {:name "v1"})
-           v2 (tv/create! {:name "v2"})
-           edge (ted/unique-upconnect! v1 :connexion v2 {:prop "the edge"})]
-       (is (ted/connected? v1 v2))
-       (is (ted/connected? v1 :connexion v2))
-       (is (not (ted/connected? v2 v1)))
-       (is (= "the edge" (ted/get edge :prop))))))
+    (testing "Multiple times"
+      (tg/transact!
+       (let [v1 (tv/create! {:name "v1"})
+             v2 (tv/create! {:name "v2"})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:prop "the edge"})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:a 1 :b 2})
+             edge (ted/unique-upconnect! v1 :connexion v2 {:b 0})]
+         (is (ted/connected? v1 v2))
+         (is (ted/connected? v1 :connexion v2))
+         (is (not (ted/connected? v2 v1)))
+         (is (= "the edge" (ted/get edge :prop)))
+         (is (= 1 (ted/get edge :a)))
+         (is (= 0 (ted/get edge :b)))
+         (ted/connect! v1 :connexion v2)
+         (is (thrown? Throwable #"There were 2 vertices returned."
+                      (ted/unique-upconnect! v1 :connexion v2))))))
+    (tg/shutdown)
+    (clear-db)))
 
-  (testing "Multiple times"
-    (tg/transact!
-     (let [v1 (tv/create! {:name "v1"})
-           v2 (tv/create! {:name "v2"})
-           edge (ted/unique-upconnect! v1 :connexion v2 {:prop "the edge"})
-           edge (ted/unique-upconnect! v1 :connexion v2 {:a 1 :b 2})
-           edge (ted/unique-upconnect! v1 :connexion v2 {:b 0})]
-       (is (ted/connected? v1 v2))
-       (is (ted/connected? v1 :connexion v2))
-       (is (not (ted/connected? v2 v1)))
-       (is (= "the edge" (ted/get edge :prop)))
-       (is (= 1 (ted/get edge :a)))
-       (is (= 0 (ted/get edge :b)))
-       (ted/connect! v1 :connexion v2)
-       (is (thrown? Throwable #"There were 2 vertices returned."
-                    (ted/unique-upconnect! v1 :connexion v2))))))
-  (tg/shutdown)
-  (clear-db))
+
 
 

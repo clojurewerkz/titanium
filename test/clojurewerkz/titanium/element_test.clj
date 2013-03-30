@@ -8,8 +8,7 @@
 
 (deftest element-test
   (clear-db)
-  (g/open conf)
-  
+  (g/open conf)  
   (testing "Get keys"
     (g/transact! (let [a (v/create! {:name "v1" :a 1 :b 1})
                        b (v/create! {:name "v2" :a 1 :b 1})
