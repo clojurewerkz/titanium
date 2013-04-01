@@ -9,7 +9,7 @@
 (deftest element-test
   (clear-db)
   (g/open conf)  
-  (testing "Get keys"
+  (testing "Get keys."
     (g/transact! (let [a (v/create! {:name "v1" :a 1 :b 1})
                        b (v/create! {:name "v2" :a 1 :b 1})
                        c (e/connect! a :test-label b {:prop "e1" :a 1 :b 1})
@@ -20,7 +20,7 @@
                    (is (= #{:prop :a :b} coll-c))
                    (is (= clojure.lang.PersistentHashSet (type coll-a))))))
 
-  (testing "Get id"
+  (testing "Get id."
     (g/transact!
      (let [a (v/create!)
            b (v/create!)
