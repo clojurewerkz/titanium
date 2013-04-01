@@ -19,7 +19,7 @@
 (defn- keyword-to-direction [k]
   (case k
     :in  Direction/IN
-    :out Direction/IN
+    :out Direction/OUT
     ;;TODO throw an error here
     ))
 
@@ -31,33 +31,27 @@
 
 (defn create-edge-label
   "Creates a edge label with the given properties."
-  ([tname] (create-edge-label name {}))
+  ([tname] (create-edge-label tname {}))
   ([tname {:keys [simple direction primary-key signature
-                 unique-direction unique-locked group]
-          :as m
-          :or {simple false
-               direction "directed"
-               primary-key nil
-               signature   nil
-               unique-direction false
-               unique-locked    true
-               group       default-group}}]
+                  unique-direction unique-locked group]
+           :or {direction "directed"
+                primary-key nil
+                signature   nil
+                unique-direction false
+                unique-locked    true
+                group       default-group}}]
      (ensure-graph-is-transaction-safe)
      (let [type-maker (.. (get-graph)
                           makeType
                           (name (name tname))
                           (group group))]
-
-       (when simple (.simple type-maker))
-
        (when unique-direction                           
          (.unique type-maker
                   (keyword-to-direction unique-direction)
                   (convert-bool-to-lock unique-locked)))
        (case direction
          "directed"    (.directed type-maker)
-         "unidirected" (.unidirected type-maker)
-         "undirected"  (.undirected type-maker))
+         "unidirected" (.unidirected type-maker))
        (when signature (.signature type-maker signature))
        (when primary-key (.primaryKey type-maker (into-array TitanType primary-key)))
        (.makeEdgeLabel type-maker))))
@@ -80,22 +74,18 @@
                             (name (name tname))
                             (group group)
                             (dataType data-type))]
-       (println indexed-vertex? indexed-edge? searchable? unique-direction)
        (when indexed-vertex? 
          (if searchable?
            (.indexed type-maker "search" Vertex)
            (.indexed type-maker Vertex)))
-
        (when indexed-edge? 
          (if searchable?
            (.indexed type-maker "search" Edge)
            (.indexed type-maker Edge)))
-
        (when unique-direction
          (.unique type-maker 
                   (keyword-to-direction unique-direction) 
                   (convert-bool-to-lock unique-locked)))
-
        (.makePropertyKey type-maker))))
 
 (defn create-edge-label-once
