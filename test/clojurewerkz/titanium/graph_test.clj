@@ -25,8 +25,8 @@
   (let [p (sio/create-temp-dir)
         d (do (.deleteOnExit p)
               (.getPath p))]
-    (tg/open {:storage {:directory d
-                        :backend  "berkeleyje"}})
+    (tg/open {"storage.directory" d
+              "storage.backend"  "berkeleyje"})
     (is (tg/open?))
     (tg/shutdown)))
 

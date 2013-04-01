@@ -1,46 +1,59 @@
 (ns clojurewerkz.titanium.types
-  (:import (com.thinkaurelius.titan.core TypeGroup TitanType))
-  (:use [archimedes.core :only (*graph* *pre-fn*)]))
+  (:import (com.thinkaurelius.titan.core TypeGroup TitanType TypeMaker$UniquenessConsistency)
+           (com.tinkerpop.blueprints Vertex Edge Direction Graph))
+  (:use [clojurewerkz.titanium.graph :only (get-graph ensure-graph-is-transaction-safe)]))
 
 (defn get-type [tname]
-  (*pre-fn*)
-  (.getType *graph* (name tname)))
+  (ensure-graph-is-transaction-safe)
+  (.getType (get-graph) (name tname)))
 
 ;; The default type group when no group is specified during type construction.
 (def default-group (TypeGroup/DEFAULT_GROUP))
 
 (defn create-group
-  "Create a TitanGroup. \"A TitanGroup is defined with a name and an id, however, two groups with thesame id are considered equivalent. The name is only used for recognition and is not persisted in the database. Group ids must be positive (>0) and the maximum group id allowed is configurable.\"-http://thinkaurelius.github.com/titan/javadoc/current/com/thinkaurelius/titan/core/TypeGroup.html"
+  "Create a TitanGroup."
   [group-id group-name]
-  (*pre-fn*)
+  (ensure-graph-is-transaction-safe)
   (TypeGroup/of group-id group-name))
 
-(defn- create-type-maker
-  "Reduces reduancy in edge-label and vertex-key creation methods"
-  [tname {:keys [functional f-locked group]
-          :or   {functional  false
-                 f-locked    false
-                 group       default-group}}]
-  (*pre-fn*)
-  (let [type-maker   (.. *graph*
-                         makeType
-                         (name (name tname))
-                         (group group))]
-    (when functional (.functional type-maker f-locked))
-    type-maker))
+(defn- keyword-to-direction [k]
+  (case k
+    :in  Direction/IN
+    :out Direction/IN
+    ;;TODO throw an error here
+    ))
+
+(defn- convert-bool-to-lock [b]
+  (if b
+    TypeMaker$UniquenessConsistency/LOCK
+    TypeMaker$UniquenessConsistency/NO_LOCK))
 
 
 (defn create-edge-label
   "Creates a edge label with the given properties."
-  ([name] (create-edge-label name {}))
-  ([name {:keys [simple direction primary-key signature]
+  ([tname] (create-edge-label name {}))
+  ([tname {:keys [simple direction primary-key signature
+                 unique-direction unique-locked group]
           :as m
           :or {simple false
                direction "directed"
                primary-key nil
-               signature   nil}}]
-     (let [type-maker (create-type-maker name m)]
+               signature   nil
+               unique-direction false
+               unique-locked    true
+               group       default-group}}]
+     (ensure-graph-is-transaction-safe)
+     (let [type-maker (.. (get-graph)
+                          makeType
+                          (name (name tname))
+                          (group group))]
+
        (when simple (.simple type-maker))
+
+       (when unique-direction                           
+         (.unique type-maker
+                  (keyword-to-direction unique-direction)
+                  (convert-bool-to-lock unique-locked)))
        (case direction
          "directed"    (.directed type-maker)
          "unidirected" (.unidirected type-maker)
@@ -49,31 +62,58 @@
        (when primary-key (.primaryKey type-maker (into-array TitanType primary-key)))
        (.makeEdgeLabel type-maker))))
 
-(defn create-vertex-key
-  "Creates a vertex key with the given properties."
-  ([name data-type] (create-vertex-key name data-type {}))
-  ([name data-type {:keys [unique indexed]
-                    :as m
-                    :or {unique false
-                         indexed false}}]
-     (let [type-maker (.. (create-type-maker name m)
-                          (dataType data-type))]
-       (when unique (.unique type-maker))
-       (when indexed (.indexed type-maker))
+(defn create-property-key
+  "Creates a property key with the given properties."
+  ([tname data-type] (create-property-key tname data-type {}))
+  ([tname data-type {:keys [unique-direction 
+                            unique-locked 
+                            group
+                            indexed-vertex?
+                            indexed-edge?
+                            searchable?]
+                     :or   {unique-direction false
+                            unique-locked    true
+                            group       default-group}}]
+     (ensure-graph-is-transaction-safe)
+     (let [type-maker   (.. (get-graph)
+                            makeType
+                            (name (name tname))
+                            (group group)
+                            (dataType data-type))]
+       (println indexed-vertex? indexed-edge? searchable? unique-direction)
+       (when indexed-vertex? 
+         (if searchable?
+           (.indexed type-maker "search" Vertex)
+           (.indexed type-maker Vertex)))
+
+       (when indexed-edge? 
+         (if searchable?
+           (.indexed type-maker "search" Edge)
+           (.indexed type-maker Edge)))
+
+       (when unique-direction
+         (.unique type-maker 
+                  (keyword-to-direction unique-direction) 
+                  (convert-bool-to-lock unique-locked)))
+
        (.makePropertyKey type-maker))))
 
 (defn create-edge-label-once
   "Checks to see if a edge label with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  [name & args]
-  (if-let [named-type (get-type name)]
-    named-type
-    (apply create-edge-label (cons name args))))
+  ([name] (create-edge-label-once name {}))
+  ([name m]
+     (ensure-graph-is-transaction-safe)
+     (if-let [named-type (get-type name)]
+       named-type
+       (create-edge-label name m))))
 
-(defn create-vertex-key-once
-  "Checks to see if a vertex key with the given name exists already.
+(defn create-property-key-once
+  "Checks to see if a property key with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  [name & args]
-  (if-let [named-type (get-type name)]
-    named-type
-    (apply create-vertex-key (cons name args))))
+  ([name] (create-property-key-once name {}))
+  ([name m]
+     (ensure-graph-is-transaction-safe)
+     (if-let [named-type (get-type name)]
+       named-type
+       (create-property-key m))))

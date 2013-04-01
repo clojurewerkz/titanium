@@ -31,10 +31,7 @@
 (defn convert-config-map [m]
   (let [conf (org.apache.commons.configuration.BaseConfiguration.)]
     (doseq [[k1 v1] m]
-            (if (string? v1)
-              (.setProperty conf (name k1) v1)
-              (doseq [[k2 v2] v1]
-                (.setProperty conf (str (name k1) "." (name k2)) v2))))
+      (.setProperty conf (name k1) v1))
     conf))
 
 (defprotocol TitaniumGraph
