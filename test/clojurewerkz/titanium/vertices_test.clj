@@ -221,10 +221,14 @@
   (tg/open conf)
 
   (tg/transact!    
-   (tt/create-property-key-once :vname String {:indexed-vertex? true})
-   (tt/create-property-key-once :age Long {:indexed-vertex? true})
-   (tt/create-property-key-once :first-name String {:indexed-vertex? true})
-   (tt/create-property-key-once :last-name String {:indexed-vertex? true}))
+   (tt/create-property-key-once :vname String {:indexed-vertex? true
+                                               :unique-direction :out})
+   (tt/create-property-key-once :age Long {:indexed-vertex? true
+                                           :unique-direction :out})
+   (tt/create-property-key-once :first-name String {:indexed-vertex? true
+                                                    :unique-direction :out})
+   (tt/create-property-key-once :last-name String {:indexed-vertex? true
+                                                   :unique-direction :out}))
   
   (testing "Deletion of vertices"    
     (tg/transact!

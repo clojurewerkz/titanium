@@ -7,7 +7,7 @@
                  [com.thinkaurelius.titan/titan-all  "0.3.0"]
                  [potemkin "0.2.0"]
                  [zmaril/ogre "2.3.0.0"]
-                 [zmaril/archimedes "1.0.0-alpha2"]]
+                 [zmaril/archimedes "1.0.0-alpha3-SNAPSHOT"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
