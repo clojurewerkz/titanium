@@ -52,8 +52,8 @@
   ;; (testing "Dueling transactions"
   ;;   (testing "Without retries"
   ;;     (tg/transact!
-  ;;      (tt/create-vertex-key-once :vertex-id Long {:indexed true
-  ;;                                                  :unique true}))
+  ;;      (tt/create-property-key-once :vertex-id Long {:indexed-vertex? true
+  ;;                                                  :unique-direction :out}))
   ;;     (let [random-long (long (rand-int 100000))
   ;;           f1 (future (tg/transact! (tv/upsert! :vertex-id {:vertex-id random-long})))
   ;;           f2 (future (tg/transact! (tv/upsert! :vertex-id {:vertex-id random-long})))]
@@ -61,27 +61,26 @@
   ;;       (is (thrown? java.util.concurrent.ExecutionException
   ;;                    (do @f1 @f2)) "The futures throw errors.")))
   ;;   (testing "With retries"
-  ;;     (tg/open conf)
-  ;;     (tg/transact!
-  ;;      (tt/create-vertex-key-once :vertex-id Long {:indexed true
-  ;;                                                  :unique true}))
   ;;     (let [random-long (long (rand-int 100000))
-  ;;           f1 (future (tg/retry-transact! 3 100 (tv/upsert! :vertex-id {:vertex-id random-long})))
-  ;;           f2 (future (tg/retry-transact! 3 100 (tv/upsert! :vertex-id {:vertex-id random-long})))]
+  ;;           f1 (future (tg/retry-transact! 3 100 
+  ;;                                          (tv/upsert! :vertex-id {:vertex-id random-long})))
+  ;;           f2 (future (tg/retry-transact! 3 100 
+  ;;                                          (tv/upsert! :vertex-id {:vertex-id random-long})))]
 
   ;;       (is (= random-long
   ;;              (tg/transact!
   ;;               (tv/get (tv/refresh (first @f1)) :vertex-id))
   ;;              (tg/transact!
-  ;;               (tv/get (tv/refresh (first @f2)) :vertex-id))) "The futures have the correct values.")
+  ;;               (tv/get (tv/refresh (first @f2)) :vertex-id))) 
+  ;;           "The futures have the correct values.")
 
+  ;;       (println (tg/transact! (tv/find-by-kv :vertex-id random-long)) )
   ;;       (is (= 1 (count
   ;;                 (tg/transact! (tv/find-by-kv :vertex-id random-long))))
   ;;           "*graph* has only one vertex with the specified vertex-id"))))
+
   ;; (testing "With retries and an exponential backoff function"
-  ;;   (tg/transact!
-  ;;    (tt/create-vertex-key-once :vertex-id Long {:indexed true
-  ;;                                                :unique true}))
+  ;;   (tg/transact!)
   ;;   (let [backoff-fn (fn [try-count] (+ (Math/pow 10 try-count) (* try-count (rand-int 100))))
   ;;         random-long (long (rand-int 100000))
   ;;         f1 (future (tg/retry-transact! 3 backoff-fn (tv/upsert! :vertex-id {:vertex-id random-long})))
@@ -93,6 +92,7 @@
   ;;            (tg/transact!
   ;;             (tv/get (tv/refresh (first @f2)) :vertex-id))) "The futures have the correct values.")
 
+  ;;     (println (tg/transact! (tv/find-by-kv :vertex-id random-long)) )
   ;;     (is (= 1 (count
   ;;               (tg/transact! (tv/find-by-kv :vertex-id random-long))))
   ;;         "*graph* has only one vertex with the specified vertex-id")))
