@@ -91,19 +91,19 @@
 (defn create-edge-label-once
   "Checks to see if a edge label with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  ([name] (create-edge-label-once name {}))
-  ([name m]
+  ([tname] (create-edge-label-once tname {}))
+  ([tname m]
      (ensure-graph-is-transaction-safe)
-     (if-let [named-type (get-type name)]
+     (if-let [named-type (get-type tname)]
        named-type
-       (create-edge-label name m))))
+       (create-edge-label tname m))))
 
 (defn create-property-key-once
   "Checks to see if a property key with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  ([name] (create-property-key-once name {}))
-  ([name m]
+  ([tname data-type] (create-property-key-once tname data-type {}))
+  ([tname data-type m]
      (ensure-graph-is-transaction-safe)
-     (if-let [named-type (get-type name)]
+     (if-let [named-type (get-type tname)]
        named-type
-       (create-property-key m))))
+       (create-property-key tname data-type m))))
