@@ -180,6 +180,15 @@
                                         (ted/edges-between (tv/refresh v1) (tv/refresh v2)))))))))
   
   (testing "Upconnect!"
+    (testing "Upconnecting once without data"
+      (tg/transact!
+       (let [v1 (tv/create! {:name "v1"})
+             v2 (tv/create! {:name "v2"})
+             edge (first (ted/upconnect! v1 :connexion v2))]
+         (is (ted/connected? v1 v2))
+         (is (ted/connected? v1 :connexion v2))
+         (is (not (ted/connected? v2 v1))))))
+
     (testing "Upconnecting once"
       (tg/transact!
        (let [v1 (tv/create! {:name "v1"})

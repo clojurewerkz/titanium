@@ -16,18 +16,22 @@
   (ensure-graph-is-transaction-safe)
   (TypeGroup/of group-id group-name))
 
-(defn- keyword-to-direction [k]
-  (case k
-    :in  Direction/IN
-    :out Direction/OUT
-    ;;TODO throw an error here
-    ))
-
 (defn- convert-bool-to-lock [b]
   (if b
     TypeMaker$UniquenessConsistency/LOCK
     TypeMaker$UniquenessConsistency/NO_LOCK))
 
+
+(defn unique-direction-converter [type-maker unique-direction unique-locked]
+  (when unique-direction
+    (when (#{:both :in} unique-direction)
+      (.unique type-maker 
+               Direction/IN                  
+               (convert-bool-to-lock unique-locked)))
+    (when (#{:both :out} unique-direction)
+      (.unique type-maker 
+               Direction/OUT                  
+               (convert-bool-to-lock unique-locked)))))
 
 (defn create-edge-label
   "Creates a edge label with the given properties."
@@ -45,10 +49,7 @@
                           makeType
                           (name (name tname))
                           (group group))]
-       (when unique-direction                           
-         (.unique type-maker
-                  (keyword-to-direction unique-direction)
-                  (convert-bool-to-lock unique-locked)))
+       (unique-direction-converter type-maker unique-direction unique-locked)
        (case direction
          "directed"    (.directed type-maker)
          "unidirected" (.unidirected type-maker))
@@ -82,10 +83,7 @@
          (if searchable?
            (.indexed type-maker "search" Edge)
            (.indexed type-maker Edge)))
-       (when unique-direction
-         (.unique type-maker 
-                  (keyword-to-direction unique-direction) 
-                  (convert-bool-to-lock unique-locked)))
+       (unique-direction-converter type-maker unique-direction unique-locked)
        (.makePropertyKey type-maker))))
 
 (defn create-edge-label-once

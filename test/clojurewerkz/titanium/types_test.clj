@@ -3,6 +3,7 @@
   (:use [clojure.test]
         [clojurewerkz.titanium.conf :only (clear-db conf)])
   (:require [clojurewerkz.titanium.types :as tt]
+            [clojurewerkz.titanium.vertices :as tv]
             [clojurewerkz.titanium.graph :as tg]))
 
 (deftest test-types
@@ -109,17 +110,37 @@
          (is (.isUnique k Direction/OUT))
          (is (not (.isUnique k Direction/IN))))))
 
+    (testing "Unique property in both directions."
+      (tg/transact! 
+       (tt/create-property-key :seventh-key Long
+                               {:indexed-vertex? true
+                                :indexed-edge? true
+                                :unique-direction :both})
+       (let [k (tt/get-type :seventh-key)]
+         (tv/create! {:seventh-key 1})
+         (is (.isPropertyKey k))
+         (is (not (.isEdgeLabel k)))
+         (is (= "seventh-key" (.getName k)))
+         (is (.hasIndex k "standard" Vertex))
+         (is (not (.hasIndex k "search" Vertex)))
+         (is (.hasIndex k "standard" Edge))
+         (is (not (.hasIndex k "search" Edge)))
+         (is (.isUnique k Direction/OUT))
+         (is (.isUnique k Direction/IN))
+         (is (thrown? java.lang.IllegalArgumentException
+                      (tv/create! {:seventh-key 1}))))))
+
     (testing "Search all the things."
       (tg/transact! 
-       (tt/create-property-key :seventh-key Integer
+       (tt/create-property-key :eighth-key Integer
                                {:indexed-edge? true
                                 :indexed-vertex? true
                                 :searchable? true
                                 :unique-direction :out})
-       (let [k (tt/get-type :seventh-key)]
+       (let [k (tt/get-type :eighth-key)]
          (is (.isPropertyKey k))
          (is (not (.isEdgeLabel k)))
-         (is (= "seventh-key" (.getName k)) )
+         (is (= "eighth-key" (.getName k)) )
          (is (not (.hasIndex k "standard" Vertex)))
          (is (.hasIndex k "search" Vertex))
          (is (not (.hasIndex k "standard" Edge)))
