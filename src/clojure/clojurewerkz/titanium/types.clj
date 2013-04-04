@@ -3,7 +3,8 @@
            (com.tinkerpop.blueprints Vertex Edge Direction Graph))
   (:use [clojurewerkz.titanium.graph :only (get-graph ensure-graph-is-transaction-safe)]))
 
-(defn get-type [tname]
+(defn get-type
+  [tname]
   (ensure-graph-is-transaction-safe)
   (.getType (get-graph) (name tname)))
 
@@ -16,13 +17,15 @@
   (ensure-graph-is-transaction-safe)
   (TypeGroup/of group-id group-name))
 
-(defn- convert-bool-to-lock [b]
+(defn- convert-bool-to-lock
+  [b]
   (if b
     TypeMaker$UniquenessConsistency/LOCK
     TypeMaker$UniquenessConsistency/NO_LOCK))
 
 
-(defn unique-direction-converter [type-maker unique-direction unique-locked]
+(defn unique-direction-converter
+  [type-maker unique-direction unique-locked]
   (when unique-direction
     (when (#{:both :in} unique-direction)
       (.unique type-maker 
@@ -33,9 +36,11 @@
                Direction/OUT                  
                (convert-bool-to-lock unique-locked)))))
 
+
 (defn create-edge-label
   "Creates a edge label with the given properties."
-  ([tname] (create-edge-label tname {}))
+  ([tname]
+     (create-edge-label tname {}))
   ([tname {:keys [simple direction primary-key signature
                   unique-direction unique-locked group]
            :or {direction "directed"
@@ -59,7 +64,8 @@
 
 (defn create-property-key
   "Creates a property key with the given properties."
-  ([tname data-type] (create-property-key tname data-type {}))
+  ([tname data-type]
+     (create-property-key tname data-type {}))
   ([tname data-type {:keys [unique-direction 
                             unique-locked 
                             group
@@ -89,7 +95,8 @@
 (defn create-edge-label-once
   "Checks to see if a edge label with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  ([tname] (create-edge-label-once tname {}))
+  ([tname]
+     (create-edge-label-once tname {}))
   ([tname m]
      (ensure-graph-is-transaction-safe)
      (if-let [named-type (get-type tname)]
@@ -99,7 +106,8 @@
 (defn create-property-key-once
   "Checks to see if a property key with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  ([tname data-type] (create-property-key-once tname data-type {}))
+  ([tname data-type]
+     (create-property-key-once tname data-type {}))
   ([tname data-type m]
      (ensure-graph-is-transaction-safe)
      (if-let [named-type (get-type tname)]
