@@ -10,6 +10,7 @@
                  [clojurewerkz/archimedes "1.0.0-alpha3"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
+  :test-paths ["test/clojure" "test/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
   :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0-master-SNAPSHOT"]]}
