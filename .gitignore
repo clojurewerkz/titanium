@@ -8,3 +8,8 @@ checkouts/*
 doc/*
 deploy.docs.sh
 target/*
+/bin
+/.classpath
+/.project
+/.settings
+/target
