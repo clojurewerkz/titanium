@@ -3,7 +3,8 @@
            (com.tinkerpop.blueprints Vertex Edge Direction Graph))
   (:use [clojurewerkz.titanium.graph :only (get-graph ensure-graph-is-transaction-safe)]))
 
-(defn get-type [tname]
+(defn get-type
+  [tname]
   (ensure-graph-is-transaction-safe)
   (.getType (get-graph) (name tname)))
 
@@ -16,13 +17,15 @@
   (ensure-graph-is-transaction-safe)
   (TypeGroup/of group-id group-name))
 
-(defn- convert-bool-to-lock [b]
+(defn- convert-bool-to-lock
+  [b]
   (if b
     TypeMaker$UniquenessConsistency/LOCK
     TypeMaker$UniquenessConsistency/NO_LOCK))
 
 
-(defn unique-direction-converter [type-maker unique-direction unique-locked]
+(defn unique-direction-converter
+  [type-maker unique-direction unique-locked]
   (when unique-direction
     (when (#{:both :in} unique-direction)
       (.unique type-maker 

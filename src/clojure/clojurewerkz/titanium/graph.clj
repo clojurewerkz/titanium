@@ -55,7 +55,8 @@
   (open [^java.util.Map m]
     (g/set-graph! (TitanFactory/open (convert-config-map m)))))
 
-(defn open? []
+(defn open?
+  []
   (.isOpen archimedes.core/*graph*))
 
 
