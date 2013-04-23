@@ -42,37 +42,37 @@
      (ted/connect! hercules :battled hydra    {:times 2})
      (ted/connect! hercules :battled cerberus {:times 12})
      (let [r1 (g/query saturn
-                       (g/in :father)
-                       (g/in :father)
+                       (g/<-- [:father])
+                       (g/<-- [:father])
                        g/first-of!)
            r2 (g/query hercules
-                       (g/out :father :mother)
+                       (g/out [:father :mother])
                        (g/property :name)
                        g/into-set!)
            r3 (g/query hercules
-                       (g/--E> :battled)
+                       (g/--E> [:battled])
                        (g/has :times > 1)
                        (g/in-vertex)
                        (g/property :name)
                        g/into-set!)
            c3 (g/query hercules
-                       (g/--E> :battled)
+                       (g/--E> [:battled])
                        (g/has :times > 1)
                        (g/in-vertex)
                        g/count!)
            r4 (g/query pluto
-                       (g/--> :lives)
-                       (g/<-- :lives)
+                       (g/--> [:lives])
+                       (g/<-- [:lives])
                        (g/except [pluto])
                        (g/property :name)
                        g/into-set!)
            r5 (g/query pluto
-                       (g/--> :brother)
+                       (g/--> [:brother])
                        (g/as  "god")
-                       (g/out :lives)
+                       (g/--> [:lives])
                        (g/as  "place")
                        (g/select (g/prop :name))
-                       g/all-into-vecs!)]
+                       g/all-into-maps!)]
        (is (= r1 hercules))
        (is (= r2 #{"Alcmene" "Jupiter"}))
        (is (= r3 #{"Cerberus" "Hydra"}))
@@ -81,6 +81,6 @@
        ;; when https://github.com/tinkerpop/pipes/issues/75 is fixed,
        ;; we will be able to turn tables into vectors of maps, as they
        ;; should be represented (Neocons does it for Cypher responses). MK.
-       (is (= '(["Jupiter" "Sky"] ["Neptune" "Sea"])
-              r5)))))
+       (is (= #{{:god "Neptune" :place "Sea"} {:god "Jupiter" :place "Sky"}}
+              (set r5))))))
   (tg/shutdown))

@@ -6,8 +6,8 @@
                  [clojurewerkz/support               "0.15.0"]
                  [com.thinkaurelius.titan/titan-all  "0.3.0"]
                  [potemkin "0.2.0"]
-                 [clojurewerkz/ogre "2.3.0.1"]
-                 [clojurewerkz/archimedes "1.0.0-alpha3"]]
+                 [clojurewerkz/ogre "2.3.0.2-SNAPSHOT"]
+                 [clojurewerkz/archimedes "1.0.0-alpha4-SNAPSHOT"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
@@ -24,6 +24,10 @@
                              :releases {:checksum :fail}}
                  "sonatype-snapshots" {:url "http://oss.sonatype.org/content/repositories/snapshots"
                                        :snapshots true
-                                       :releases {:checksum :fail :update :always}}}
+                                       :releases {:checksum :fail :update :always}}
+                 "clojars"
+                 {:url "http://clojars.org/repo"
+                  :snapshots true
+                  :releases {:checksum :fail :update :always}}}
   ;;  :warn-on-reflection true
   )
