@@ -3,6 +3,7 @@
   (:require [potemkin :as po]
             [archimedes.query :as q]))
 
+(po/import-fn q/start-at)
 (po/import-macro q/has)
 (po/import-fn q/interval)
 (po/import-fn q/direction)

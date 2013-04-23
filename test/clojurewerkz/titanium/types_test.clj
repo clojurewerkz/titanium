@@ -13,7 +13,7 @@
   (testing "Create group."
     (tg/transact!
      (let [my-group-name "My-Group-Name"
-           my-group (tt/create-group 100 my-group-name)
+           my-group (tt/defgroup 100 my-group-name)
            default-group-id (.getID tt/default-group)]
        (is (= my-group-name (.getName my-group))
            "The group has the correct name")
@@ -25,7 +25,7 @@
   (testing "Create property key."
     (testing "With no parameters."
       (tg/transact!
-       (tt/create-property-key :first-key Integer)
+       (tt/defkey :first-key Integer)
        (let [k (tt/get-type :first-key)]
          (is (.isPropertyKey k))
          (is (not (.isEdgeLabel k)))
@@ -37,7 +37,7 @@
 
     (testing "With indexed vertex."
       (tg/transact!    
-       (tt/create-property-key :second-key Integer
+       (tt/defkey :second-key Integer
                                {:indexed-vertex? true})
        (let [k (tt/get-type :second-key)]
          (is (.isPropertyKey k))
@@ -50,7 +50,7 @@
 
     (testing "With indexed vertex."
       (tg/transact! 
-       (tt/create-property-key :third-key Integer
+       (tt/defkey :third-key Integer
                                {:indexed-vertex? true
                                 :unique-direction :out})
        (let [k (tt/get-type :third-key)]
@@ -64,7 +64,7 @@
 
     (testing "With indexed edge."
       (tg/transact! 
-       (tt/create-property-key :fourth-key Integer
+       (tt/defkey :fourth-key Integer
                                {:indexed-edge? true
                                 :unique-direction :out})
        (let [k (tt/get-type :fourth-key)]
@@ -78,7 +78,7 @@
 
     (testing "With searchable vertex."
       (tg/transact! 
-       (tt/create-property-key :fifth-key Integer
+       (tt/defkey :fifth-key Integer
                                {:indexed-vertex? true
                                 :searchable? true
                                 :unique-direction :out})
@@ -95,7 +95,7 @@
     
     (testing "With searchable edge."
       (tg/transact! 
-       (tt/create-property-key :sixth-key Integer
+       (tt/defkey :sixth-key Integer
                                {:indexed-edge? true
                                 :searchable? true
                                 :unique-direction :out})
@@ -112,7 +112,7 @@
 
     (testing "Unique property in both directions."
       (tg/transact! 
-       (tt/create-property-key :seventh-key Long
+       (tt/defkey :seventh-key Long
                                {:indexed-vertex? true
                                 :indexed-edge? true
                                 :unique-direction :both})
@@ -132,7 +132,7 @@
 
     (testing "Search all the things."
       (tg/transact! 
-       (tt/create-property-key :eighth-key Integer
+       (tt/defkey :eighth-key Integer
                                {:indexed-edge? true
                                 :indexed-vertex? true
                                 :searchable? true
@@ -154,7 +154,7 @@
   (testing "Create edge labels."
     (testing "With no parameters"
       (tg/transact!
-       (tt/create-edge-label :first-label)
+       (tt/deflabel :first-label)
        (let [lab (tt/get-type :first-label)]
          (is (.isEdgeLabel lab))
          (is (not (.isPropertyKey lab)))
@@ -167,8 +167,8 @@
 
     (testing "Unidirected, nondefault group, unique direction."
       (tg/transact!
-       (let [test-group (tt/create-group 60 "test")
-             label (tt/create-edge-label :second-label {:direction "unidirected"
+       (let [test-group (tt/defgroup 60 "test")
+             label (tt/deflabel :second-label {:direction "unidirected"
                                                         :group test-group
                                                         :unique-direction :out})
              lab (tt/get-type :second-label)]

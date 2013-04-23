@@ -10,24 +10,29 @@
 (po/import-fn elem/modified?)
 (po/import-fn elem/removed?)
 
-;;Tinkerpop elements 
+;;Reading properties 
 (po/import-fn vertex/get)
 (po/import-fn vertex/keys)
 (po/import-fn vertex/vals)
 (po/import-fn vertex/id-of)
+(po/import-fn vertex/to-map)
+
+;;Modifying properties
 (po/import-fn vertex/assoc!)
 (po/import-fn vertex/merge!)
 (po/import-fn vertex/dissoc!)
 (po/import-fn vertex/update!)
 (po/import-fn vertex/clear!)
 
-;;Tinkerpop Vertex
+;;Transactions 
 (po/import-fn vertex/refresh)
-(po/import-fn vertex/delete!)
-(po/import-fn vertex/to-map)
+
+;;Retrieval 
 (po/import-fn vertex/find-by-id)
 (po/import-fn vertex/find-by-kv)
 (po/import-fn vertex/get-all-vertices)
+
+;;Edge methods 
 (po/import-fn vertex/edges-of)
 (po/import-fn vertex/all-edges-of)
 (po/import-fn vertex/outgoing-edges-of)
@@ -36,6 +41,11 @@
 (po/import-fn vertex/connected-out-vertices)
 (po/import-fn vertex/connected-in-vertices)
 (po/import-fn vertex/all-connected-vertices)
+
+;;Removal
+(po/import-fn vertex/remove!)
+
+;;Creation
 (po/import-fn vertex/create!)
 (po/import-fn vertex/upsert!)
 (po/import-fn vertex/unique-upsert!)

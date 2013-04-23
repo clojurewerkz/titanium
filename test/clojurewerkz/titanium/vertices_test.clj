@@ -13,14 +13,14 @@
   (tg/open conf)
 
   (tg/transact!    
-   (tt/create-property-key-once :vname String {:indexed-vertex? true
-                                               :unique-direction :out})
-   (tt/create-property-key-once :age Long {:indexed-vertex? true
-                                           :unique-direction :out})
-   (tt/create-property-key-once :first-name String {:indexed-vertex? true
-                                                    :unique-direction :out})
-   (tt/create-property-key-once :last-name String {:indexed-vertex? true
-                                                   :unique-direction :out}))
+   (tt/defkey-once :vname String {:indexed-vertex? true
+                                  :unique-direction :out})
+   (tt/defkey-once :age Long {:indexed-vertex? true
+                              :unique-direction :out})
+   (tt/defkey-once :first-name String {:indexed-vertex? true
+                                       :unique-direction :out})
+   (tt/defkey-once :last-name String {:indexed-vertex? true
+                                      :unique-direction :out}))
   
   (testing "Adding a vertex."
     (tg/transact!
@@ -32,7 +32,7 @@
     (tg/transact!
      (let [u (tv/create! {:vname "uniquename"})
            u-id (tv/id-of u)]
-       (tv/delete! u)
+       (tv/remove! u)
        (is (=  nil (tv/find-by-id u-id)))
        (is (empty? (tv/find-by-kv :vname "uniquename"))))))
 
@@ -40,7 +40,7 @@
     (tg/transact!
      (let [v        (tv/create! {:name "Gerard" :value "test"})
            id       (tv/id-of v)]
-       (tv/delete! v)
+       (tv/remove! v)
        (is (nil? (tv/find-by-id id))))))
 
   (testing "Simple property mutation." 

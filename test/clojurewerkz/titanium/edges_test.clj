@@ -44,7 +44,7 @@
            created   (ted/connect! from-node :links to-node  {:since "08 Nov, 2011"})
            fetched   (ted/find-by-id  (ted/id-of created))]
        (is (= created (ted/find-by-id (ted/id-of created))))
-       (ted/delete! created)
+       (ted/remove! created)
        (is (nil? (ted/find-by-id (ted/id-of created)))))))
 
   (testing "listing all relationships of a kind"
@@ -122,7 +122,7 @@
            w (tv/create!)
            a (ted/connect! u :test w)
            a-id (ted/id-of a)]
-       (ted/delete! a)
+       (ted/remove! a)
        (is (=  nil (ted/find-by-id a-id))))))
 
   (testing "Single property mutation"

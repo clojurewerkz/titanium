@@ -28,7 +28,8 @@
 
 (g/set-pre-fn! ensure-graph-is-transaction-safe)
 
-(defn convert-config-map [m]
+(defn convert-config-map 
+  [m]
   (let [conf (org.apache.commons.configuration.BaseConfiguration.)]
     (doseq [[k1 v1] m]
       (.setProperty conf (name k1) v1))
