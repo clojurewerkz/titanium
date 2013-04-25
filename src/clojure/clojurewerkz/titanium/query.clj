@@ -1,4 +1,5 @@
 (ns clojurewerkz.titanium.query
+  (:refer-clojure :exclude [count])
   (:import  [com.tinkerpop.blueprints Vertex Edge Direction Query])
   (:require [potemkin :as po]
             [archimedes.query :as q]))
@@ -11,4 +12,4 @@
 (po/import-fn q/limit)
 (po/import-macro q/find-vertices)
 (po/import-macro q/find-edges)
-(po/import-macro q/count-edges)
+(po/import-macro q/count)

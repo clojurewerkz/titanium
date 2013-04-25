@@ -1,3 +1,14 @@
+## Changes between Titanium 1.0.0-alpha3 and 1.0.0-beta1
+
+* Archimedes and Ogre have been updated as development has continued.
+* Titan is now version 0.3.0.
+* `delete!` has become `remove!`, `create-group` is now
+  `defgroup`, `create-property-key`/`-once` is `defkey`/`-once`, and
+  `create-edge-label` is now `deflabel`/`-once`.
+* Open now just takes a simple map from strings to strings for
+  configuration. 	
+* Tests now use embeddeded cassandra for the most part. 	
+	
 ## Changes between Titanium 1.0.0-alpha2 and 1.0.0-alpha3
 
 *Major breaking changes for almost everything*
