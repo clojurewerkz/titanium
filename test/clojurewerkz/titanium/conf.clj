@@ -2,7 +2,10 @@
   (:import (org.apache.commons.io FileUtils)))
 
 
-(def cs-dir (str "file://" (System/getProperty "user.dir")  "/resources/test-cassandra.yaml"))
+(def cs-dir (str (clojure.java.io/as-url 
+              (clojure.java.io/as-file 
+                (str (System/getProperty "user.dir") 
+                  "/resources/test-cassandra.yaml")))))
 
 (def conf {;; Embedded cassandra settings
            "storage.backend"  "embeddedcassandra"
