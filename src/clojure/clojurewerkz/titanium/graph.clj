@@ -57,7 +57,10 @@
 
 (defn open?
   []
-  (.isOpen archimedes.core/*graph*))
+  (and 
+    (bound? #'archimedes.core/*graph*)
+    (not (nil? archimedes.core/*graph*))
+    (.isOpen archimedes.core/*graph*)))
 
 
 ;;
