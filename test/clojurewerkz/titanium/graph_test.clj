@@ -17,9 +17,11 @@
   (let [p (sio/create-temp-dir)
         d (do (.deleteOnExit p)
               p)]
+    (is (not (tg/open?)))
     (tg/open d)
     (is (tg/open?))
-    (tg/shutdown)))
+    (tg/shutdown))
+    (is (not (tg/open?))))
 
 (deftest test-open-and-close-a-local-graph-with-a-connfiguration-map
   (let [p (sio/create-temp-dir)
