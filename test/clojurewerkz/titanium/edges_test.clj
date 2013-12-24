@@ -237,8 +237,8 @@
          (is (= 1 (ted/get edge :a)))
          (is (= 0 (ted/get edge :b)))
          (ted/connect! v1 :connexion v2)
-         (is (thrown? Throwable #"There were 2 vertices returned."
-                      (ted/unique-upconnect! v1 :connexion v2))))))
+         (is (thrown-with-msg? Throwable #"There were 2 vertices returned."
+                               (ted/unique-upconnect! v1 :connexion v2))))))
     (tg/shutdown)
     (clear-db)))
 

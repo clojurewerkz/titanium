@@ -49,7 +49,7 @@
       (is (= StandardVertex (type vertex)))))
 
   (testing "Stored graph"
-    (is (thrown? Throwable #"transact!" (tv/create!))))
+    (is (thrown-with-msg? Throwable #"transact!" (tv/create!))))
 
   (testing "Dueling transactions"
     (tg/transact!

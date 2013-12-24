@@ -204,8 +204,8 @@
        (is (= 22
               (tv/get (tv/refresh v1-a) :age)
               (tv/get (tv/refresh v1-b) :age)))       
-       (is (thrown? Throwable #"There were 2 vertices returned."
-                    (tv/unique-upsert! :last-name {:last-name "Maril"}))))))
+       (is (thrown-with-msg? Throwable #"There were 2 vertices returned."
+                             (tv/unique-upsert! :last-name {:last-name "Maril"}))))))
   
   (tg/shutdown)
   (clear-db))
