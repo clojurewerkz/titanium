@@ -36,7 +36,7 @@
     conf))
 
 (defprotocol TitaniumGraph
-  (^KeyIndexableGraph open [input] "Opens a new graph"))
+  (^com.tinkerpop.blueprints.KeyIndexableGraph open [input] "Opens a new graph"))
 
 (extend-protocol TitaniumGraph
   String
