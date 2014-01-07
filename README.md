@@ -3,6 +3,7 @@
 Titanium is a Clojure graph library built on top of [Titan](http://thinkaurelius.github.com/titan/)
 and the [Tinkerpop stack](http://tinkerpop.com).
 
+# Disclaimer: Titanium development is currently on hiatus. There are major breaking changes that need to be made to this library and the documentation and the primary developer ([zmaril](http://github.com/zmaril)) is too busy finishing college to make them. If you are interested in making the changes, please get in touch, otherwise beware!
 
 ## Project Goals
 
