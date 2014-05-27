@@ -11,7 +11,7 @@
 (ns clojurewerkz.titanium.edges
   (:refer-clojure :exclude [keys vals assoc! dissoc! get find])
   (:require [potemkin :as po]
-            [archimedes.edge :as edge]
+            [clojurewerkz.archimedes.edge :as edge]
             [clojurewerkz.titanium.elements :as elem]))
 
 ;;Titan elements

@@ -12,7 +12,7 @@
   (:refer-clojure :exclude [count])
   (:import  [com.tinkerpop.blueprints Vertex Edge Direction Query])
   (:require [potemkin :as po]
-            [archimedes.query :as q]))
+            [clojurewerkz.archimedes.query :as q]))
 
 (po/import-fn q/start-at)
 (po/import-macro q/has)

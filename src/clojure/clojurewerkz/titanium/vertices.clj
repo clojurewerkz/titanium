@@ -11,7 +11,7 @@
 (ns clojurewerkz.titanium.vertices
   (:refer-clojure :exclude [keys vals assoc! dissoc! get find])
   (:require [potemkin :as po]
-            [archimedes.vertex :as vertex]
+            [clojurewerkz.archimedes.vertex :as vertex]
             [clojurewerkz.titanium.elements :as elem]))
 
 ;;Titan elements
@@ -20,7 +20,7 @@
 (po/import-fn elem/modified?)
 (po/import-fn elem/removed?)
 
-;;Reading properties 
+;;Reading properties
 (po/import-fn vertex/get)
 (po/import-fn vertex/keys)
 (po/import-fn vertex/vals)
@@ -34,15 +34,15 @@
 (po/import-fn vertex/update!)
 (po/import-fn vertex/clear!)
 
-;;Transactions 
+;;Transactions
 (po/import-fn vertex/refresh)
 
-;;Retrieval 
+;;Retrieval
 (po/import-fn vertex/find-by-id)
 (po/import-fn vertex/find-by-kv)
 (po/import-fn vertex/get-all-vertices)
 
-;;Edge methods 
+;;Edge methods
 (po/import-fn vertex/edges-of)
 (po/import-fn vertex/all-edges-of)
 (po/import-fn vertex/outgoing-edges-of)
