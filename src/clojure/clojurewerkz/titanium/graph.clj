@@ -10,7 +10,7 @@
 
 (ns clojurewerkz.titanium.graph
   (:require [potemkin :as po]
-            [clojurewerks.archimedes.graph :as g])
+            [clojurewerkz.archimedes.graph :as g])
   (:import  [com.thinkaurelius.titan.core TitanFactory TitanGraph]
             [com.tinkerpop.blueprints Vertex Edge
              Graph KeyIndexableGraph
