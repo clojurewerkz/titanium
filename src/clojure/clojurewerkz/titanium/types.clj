@@ -97,17 +97,17 @@
 (defn deflabel-once
   "Checks to see if a edge label with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  ([tname] (deflabel-once tname {}))
-  ([tname m]
-     (if-let [named-type (get-type tname)]
+  ([graph tname] (deflabel-once graph tname {}))
+  ([graph tname m]
+     (if-let [named-type (get-type graph tname)]
        named-type
-       (deflabel tname m))))
+       (deflabel graph tname m))))
 
 (defn defkey-once
   "Checks to see if a property key with the given name exists already.
   If so, nothing happens, otherwise it is created."
-  ([tname data-type] (defkey-once tname data-type {}))
-  ([tname data-type m]
-     (if-let [named-type (get-type tname)]
+  ([graph tname data-type] (defkey-once tname data-type {}))
+  ([graph tname data-type m]
+     (if-let [named-type (get-type graph tname)]
        named-type
-       (defkey tname data-type m))))
+       (defkey graph tname data-type m))))

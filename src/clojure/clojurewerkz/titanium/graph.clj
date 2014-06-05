@@ -24,6 +24,7 @@
 (po/import-fn g/commit)
 (po/import-fn g/rollback)
 (po/import-macro g/with-transaction)
+(po/import-macro g/with-transaction-retry)
 
 ;;
 ;; API
