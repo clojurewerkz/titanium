@@ -9,27 +9,28 @@
 ;; You must not remove this notice, or any other, from this software.
 
 (ns clojurewerkz.titanium.types
-  (:import (com.thinkaurelius.titan.core TypeGroup TitanType TypeMaker$UniquenessConsistency)
+  (:import (com.thinkaurelius.titan.core TitanType KeyMaker LabelMaker TypeMaker$UniquenessConsistency)
            (com.tinkerpop.blueprints Vertex Edge Direction Graph)))
 
+;; Types are uniquely identified by their name. Attempting to define a
+;; new type with an existing name will result in an exception. Note,
+;; that labels and keys share the same namespace, i.e., labels and keys
+;; cannot have the same name either.
+
 (defn get-type
+  "In Titan, edge labels and property keys are types which can be
+   individually configured to provide data verification, better storage
+   efficiency, and higher performance. Types are uniquely identified by
+   their name and are themselves vertices in the graph. Type vertices
+   can be retrieved by their name."
   [graph tname]
   (.getType graph (name tname)))
-
-;; The default type group when no group is specified during type construction.
-(def default-group (TypeGroup/DEFAULT_GROUP))
-
-(defn defgroup
-  "Define a TitanGroup."
-  [group-id group-name]
-  (TypeGroup/of group-id group-name))
 
 (defn- convert-bool-to-lock
   [b]
   (if b
     TypeMaker$UniquenessConsistency/LOCK
     TypeMaker$UniquenessConsistency/NO_LOCK))
-
 
 (defn unique-direction-converter
   [type-maker unique-direction unique-locked]
@@ -66,37 +67,68 @@
        (when primary-key (.primaryKey type-maker (into-array TitanType primary-key)))
        (.makeEdgeLabel type-maker))))
 
+(defn- parse-index-specification
+  [spec include-standard-index?]
+  (let [indices (cond
+                 (coll? spec) (into #{} (map name spec))
+                 (true? spec) (conj #{} "standard")
+                 :else        (conj #{} (name spec)))]
+    (if include-standard-index?
+      (conj indices "standard")
+      indices)))
+
 (defn defkey
-  "Creates a property key with the given properties."
+  "Creates a property key with the given properties, identified by `tname`.
+   Attempting to define a new type with an existing name will result in
+   an exception. Note that labels and keys share the same namespace,
+   i.e., labels and keys cannot have the same name either. Use
+   `defkey-once` to check for existence of the named property before
+   attempting to create it.
+
+   To index vertices with this property:
+
+     (defkey graph :name java.lang.String {:vertex-index true})
+
+   and to index edges:
+
+     (defkey graph :name java.lang.String {:edge-index true})
+
+   This will add items to the standard index. To specify a different index,
+   give the index name rather than just a boolean:
+
+     (defkey graph :name java.lang.String {:vertex-index \"search\"})
+
+   The same property may be indexed for both edges and vertices, and one or
+   other may appear in multiple indices:
+
+     (defkey graph :name java.lang.String {:vertex-index [\"standard\" \"search\"]
+                                           :edge-index true})
+
+   Vertices (but not edges!) may be indexed uniquely:
+
+     (defkey graph :ssn java.lang.String {:unique? true})
+
+   Specifying `:unique? true` will automatically add the property to the standard
+   index and will, by default, use a lock to ensure the uniqueness constraint. You can
+   suppress locking by specifying `:unique-locked? false`, in which case concurrent
+   transactions may overwrite existing uniqueness constraints."
   ([graph tname data-type] (defkey graph tname data-type {}))
-  ([graph tname data-type {:keys [unique-direction
-                            unique-locked
-                            group
-                            indexed-vertex?
-                            indexed-edge?
-                            searchable?]
-                     :or   {unique-direction false
-                            unique-locked    true
-                            group       default-group}}]
-     (let [type-maker   (.. graph
-                            makeType
-                            (name (name tname))
-                            (group group)
-                            (dataType data-type))]
-       (when indexed-vertex?
-         (if searchable?
-           (.indexed type-maker "search" Vertex)
-           (.indexed type-maker Vertex)))
-       (when indexed-edge?
-         (if searchable?
-           (.indexed type-maker "search" Edge)
-           (.indexed type-maker Edge)))
-       (unique-direction-converter type-maker unique-direction unique-locked)
-       (.makePropertyKey type-maker))))
+  ([graph tname data-type {:keys [vertex-index edge-index unique? unique-locked?]
+                           :or   {unique? false, unique-locked? true}}]
+     (let [^KeyMaker type-maker (.makeType graph (name tname))]
+       (.dataType type-maker data-type)
+       (doseq [index-name (parse-index-specification vertex-index unique?)]
+         (.indexed type-maker index-name Vertex))
+       (doseq [index-name (parse-index-specification edge-index false)]
+         (.indexed type-maker index-name Edge))
+       (when unique?
+         (.unique type-maker (convert-bool-to-lock unique-locked?)))
+       (.make type-maker))))
 
 (defn deflabel-once
   "Checks to see if a edge label with the given name exists already.
-  If so, nothing happens, otherwise it is created."
+  If so, nothing happens, otherwise it is created. Note that no attempt
+  is made to ensure that the pre-existing label has the desired properties."
   ([graph tname] (deflabel-once graph tname {}))
   ([graph tname m]
      (if-let [named-type (get-type graph tname)]
@@ -105,7 +137,8 @@
 
 (defn defkey-once
   "Checks to see if a property key with the given name exists already.
-  If so, nothing happens, otherwise it is created."
+  If so, nothing happens, otherwise it is created. Note that no attempt
+  is made to ensure that the pre-existing key has the desired properties."
   ([graph tname data-type] (defkey-once tname data-type {}))
   ([graph tname data-type m]
      (if-let [named-type (get-type graph tname)]
