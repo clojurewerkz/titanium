@@ -1,6 +1,5 @@
 (ns clojurewerkz.titanium.edges-test
   (:require [clojurewerkz.titanium.graph    :as tg]
-            [clojurewerkz.titanium.indexing :as ti]
             [clojurewerkz.titanium.vertices :as tv]
             [clojurewerkz.titanium.edges    :as ted])
   (:use clojure.test

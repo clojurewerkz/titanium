@@ -1,8 +1,7 @@
 (ns clojurewerkz.titanium.vertices-test
   (:require [clojurewerkz.titanium.graph    :as tg]
             [clojurewerkz.titanium.vertices :as tv]
-            [clojurewerkz.titanium.edges    :as ted]            
-            [clojurewerkz.titanium.indexing :as ti]
+            [clojurewerkz.titanium.edges    :as ted]
             [clojurewerkz.titanium.types    :as tt])
   (:use clojure.test
         [clojurewerkz.titanium.conf :only (clear-db conf)])
@@ -12,7 +11,7 @@
   (clear-db)
   (tg/open conf)
 
-  (tg/transact!    
+  (tg/transact!
    (tt/defkey-once :vname String {:indexed-vertex? true
                                   :unique-direction :out})
    (tt/defkey-once :age Long {:indexed-vertex? true
@@ -21,14 +20,14 @@
                                        :unique-direction :out})
    (tt/defkey-once :last-name String {:indexed-vertex? true
                                       :unique-direction :out}))
-  
+
   (testing "Adding a vertex."
     (tg/transact!
      (let [v (tv/create! {:name "Titanium" :language "Clojure"})]
        (is (.getId v))
        (is (= "Titanium" (.getProperty v "name"))))))
 
-  (testing "Deletion of vertices."    
+  (testing "Deletion of vertices."
     (tg/transact!
      (let [u (tv/create! {:vname "uniquename"})
            u-id (tv/id-of u)]
@@ -43,7 +42,7 @@
        (tv/remove! v)
        (is (nil? (tv/find-by-id id))))))
 
-  (testing "Simple property mutation." 
+  (testing "Simple property mutation."
     (tg/transact!
      (let [u (tv/create! {:a 1 :b 1})]
        (tv/assoc! u :b 2)
@@ -51,7 +50,7 @@
        (is (= 2   (tv/get u :b)))
        (is (= nil (tv/get u :a))))))
 
-  (testing "Multiple property mutation." 
+  (testing "Multiple property mutation."
     (tg/transact!
      (let [u (tv/create! {:a 1 :b 1 :d 1})]
        (tv/assoc! u :b 2 :c 3)
@@ -75,7 +74,7 @@
            v        (tv/create! data)
            v'       (tv/merge! v {:age 31} {:position "Industrial Designer"})]
        (is (= v v'))
-       (is (= {:name "Gerard" :age 31 :position "Industrial Designer"} 
+       (is (= {:name "Gerard" :age 31 :position "Industrial Designer"}
               (dissoc (tv/to-map v) :__id__)))
        (are [k val] (is (= val (tv/get v k)))
             :name "Gerard" :age 31))))
@@ -97,7 +96,7 @@
            v'       (tv/clear! v)]
        (is (= v v'))
        (is (= {} (dissoc (tv/to-map v) :__id__))))))
- 
+
   (testing "Property map."
     (tg/transact!
      (let [v1 (tv/create! {:a 1 :b 2 :c 3})
@@ -117,10 +116,10 @@
               (dissoc (tv/to-map v) :__id__))))))
 
   (testing "Dissocing property map."
-    (tg/transact!                                                          
+    (tg/transact!
      (let [m {:station "Boston Manor" :lines #{"Piccadilly"}}
            v (tv/create! m)]
-       (ted/dissoc! v "lines")                                             
+       (ted/dissoc! v "lines")
        (is (= {:station "Boston Manor"} (dissoc (tv/to-map v) :__id__))))))
 
   (testing "Accessing a non existent node."
@@ -156,7 +155,7 @@
   (testing "Get all vertices."
     (tg/transact!
      (let [v1 (tv/create! {:age 28 :name "Michael"})
-           v2 (tv/create! {:age 26 :name "Alex"})        
+           v2 (tv/create! {:age 26 :name "Alex"})
            xs (set (tv/get-all-vertices))]
        ;; TODO CacheVertex's are hanging around
        (is (= #{v1 v2} (set (filter #(= (type %) StandardVertex) xs)))))))
@@ -174,7 +173,7 @@
            fetched (tv/find-by-id (tv/id-of created))]
        (is (= (tv/id-of created) (tv/id-of fetched)))
        (is (= (tv/to-map created) (tv/to-map fetched))))))
- 
+
   (testing "Upsert!"
     (tg/transact!
      (let [v1-a (tv/upsert! :first-name
@@ -203,9 +202,9 @@
                                    {:first-name "Brooke" :last-name "Maril" :age 19})]
        (is (= 22
               (tv/get (tv/refresh v1-a) :age)
-              (tv/get (tv/refresh v1-b) :age)))       
+              (tv/get (tv/refresh v1-b) :age)))
        (is (thrown-with-msg? Throwable #"There were 2 vertices returned."
                              (tv/unique-upsert! :last-name {:last-name "Maril"}))))))
-  
+
   (tg/shutdown)
   (clear-db))
