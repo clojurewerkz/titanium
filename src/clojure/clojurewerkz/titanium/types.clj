@@ -192,7 +192,8 @@
   "Checks to see if a edge label with the given name exists already.
   If so, nothing happens, otherwise it is created. Note that no attempt
   is made to ensure that the pre-existing label has the desired properties."
-  ([graph tname] (deflabel-once graph tname {}))
+  ([graph tname]
+     (deflabel-once graph tname {}))
   ([graph tname m]
      (if-let [named-type (get-type graph tname)]
        named-type
@@ -202,7 +203,8 @@
   "Checks to see if a property key with the given name exists already.
   If so, nothing happens, otherwise it is created. Note that no attempt
   is made to ensure that the pre-existing key has the desired properties."
-  ([graph tname data-type] (defkey-once tname data-type {}))
+  ([graph tname data-type]
+     (defkey-once graph tname data-type {}))
   ([graph tname data-type m]
      (if-let [named-type (get-type graph tname)]
        named-type

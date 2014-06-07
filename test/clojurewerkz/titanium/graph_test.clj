@@ -4,7 +4,7 @@
             [clojurewerkz.titanium.edges    :as ted]
             [clojurewerkz.titanium.types    :as tt]
             [clojurewerkz.support.io        :as sio]
-            [clojurewerkz.archimedes.core   :as c])
+            [clojurewerkz.archimedes.graph  :as c])
   (:use clojure.test
         [clojurewerkz.titanium.test.conf :only (conf clear-db)])
   (:import java.io.File
@@ -26,22 +26,22 @@
     (is graph)
     (is (nil? (tg/shutdown graph)))))
 
-
 (deftest test-conf-graph
   (clear-db)
   (let [graph (tg/open conf)]
 
     (testing "Graph type"
-      (is (= (type graph)  StandardTitanGraph)))
+      (is (= (type graph) StandardTitanGraph)))
 
     (testing "Vertex type"
-      (let [vertex (tg/with-transaction [tx graph] (.addVertex tx))]
-        (is (= StandardVertex (type vertex)))))
+      (tg/with-transaction [tx graph]
+        (let [vertex (tv/create! tx)]
+          (is (= StandardVertex (type vertex))))))
 
     (testing "Dueling transactions"
       (tg/with-transaction [tx graph]
-        (tt/defkey-once tx :vertex-id Long {:indexed-vertex? true
-                                            :unique-direction :both}))
+        (tt/defkey-once tx :vertex-id Long {:unique? true}))
+
       (testing "Without retries"
         (let [random-long (long (rand-int 100000))
               f1 (future (tg/with-transaction [tx graph] (tv/upsert! tx :vertex-id {:vertex-id random-long})))
@@ -60,25 +60,28 @@
                  (tg/with-transaction [tx graph]
                    (tv/get (tv/refresh tx (first @f1)) :vertex-id))
                  (tg/with-transaction [tx graph]
-                  (tv/get (tv/refresh tx (first @f2)) :vertex-id)))
+                   (tv/get (tv/refresh tx (first @f2)) :vertex-id)))
               "The futures have the correct values.")
-          (is (= 1 (count (tg/with-transaction [tx graph] (tv/find-by-kv tx :vertex-id random-long))))
-              "*graph* has only one vertex with the specified vertex-id")))))
+          (is (= 1 (count (tg/with-transaction [tx graph]
+                            (tv/find-by-kv tx :vertex-id random-long))))
+              "The graph has only one vertex with the specified vertex-id")))
 
-  (testing "With retries and an exponential backoff function"
-    (let [backoff-fn (fn [try-count] (+ (Math/pow 10 try-count) (* try-count (rand-int 100))))
-          random-long (long (rand-int 100000))
-          f1 (future (tg/with-transaction-retry [tx graph :max-attempts 3 :wait-time backoff-fn]
-                       (tv/upsert! tx :vertex-id {:vertex-id random-long})))
-          f2 (future (tg/with-transaction-retry [tx graph :max-attempts 3 :wait-time backoff-fn]
-                       (tv/upsert! :vertex-id {:vertex-id random-long})))]
-      (is (= random-long
-             (tg/with-transaction [tx graph]
-              (tv/get (tv/refresh tx (first @f1)) :vertex-id))
-             (tg/with-transaction [tx graph]
-               (tv/get (tv/refresh tx (first @f2)) :vertex-id))) "The futures have the correct values.")
-      (is (= 1 (count (tg/with-transaction [tx graph]
-                        (tv/find-by-kv tx :vertex-id random-long))))
-          "*graph* has only one vertex with the specified vertex-id")))
-  (tg/shutdown graph)
+      (testing "With retries and an exponential backoff function"
+        (let [backoff-fn (fn [try-count] (+ (Math/pow 10 try-count) (* try-count (rand-int 100))))
+              random-long (long (rand-int 100000))
+              f1 (future (tg/with-transaction-retry [tx graph :max-attempts 3 :wait-time backoff-fn]
+                           (tv/upsert! tx :vertex-id {:vertex-id random-long})))
+              f2 (future (tg/with-transaction-retry [tx graph :max-attempts 3 :wait-time backoff-fn]
+                           (tv/upsert! :vertex-id {:vertex-id random-long})))]
+          (is (= random-long
+                 (tg/with-transaction [tx graph]
+                   (tv/get (tv/refresh tx (first @f1)) :vertex-id))
+                 (tg/with-transaction [tx graph]
+                   (tv/get (tv/refresh tx (first @f2)) :vertex-id)))
+              "The futures have the correct values.")
+          (is (= 1 (count (tg/with-transaction [tx graph]
+                            (tv/find-by-kv tx :vertex-id random-long))))
+              "The graph has only one vertex with the specified vertex-id"))))
+
+    (tg/shutdown graph))
   (clear-db))
