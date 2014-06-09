@@ -17,6 +17,7 @@
              :master {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}
              :dev {
                    :dependencies [[com.thinkaurelius.titan/titan-cassandra "0.4.4" :exclusions [commons-lang log4j]]
+                                  [com.thinkaurelius.titan/titan-berkeleyje "0.4.4"]
                                   [com.thinkaurelius.titan/titan-es "0.4.4"]
                                   [log4j "1.2.17"]]
                    :plugins [[codox "0.6.1"]]

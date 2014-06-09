@@ -72,7 +72,7 @@
               f1 (future (tg/with-transaction-retry [tx graph :max-attempts 3 :wait-time backoff-fn]
                            (tv/upsert! tx :vertex-id {:vertex-id random-long})))
               f2 (future (tg/with-transaction-retry [tx graph :max-attempts 3 :wait-time backoff-fn]
-                           (tv/upsert! :vertex-id {:vertex-id random-long})))]
+                           (tv/upsert! tx :vertex-id {:vertex-id random-long})))]
           (is (= random-long
                  (tg/with-transaction [tx graph]
                    (tv/get (tv/refresh tx (first @f1)) :vertex-id))
