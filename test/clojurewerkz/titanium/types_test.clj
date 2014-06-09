@@ -221,12 +221,12 @@
             (te/connect! tx v1 :fifth-label-r v3)
             (let [vs (seq (tv/connected-out-vertices v1 :fifth-label))]
               (is (= (count vs) 2))
-              (is (= (tv/get (first vs) :name)) "v2")
-              (is (= (tv/get (second vs) :name)) "v3"))
+              (is (= (tv/get (first vs) :name) "v2"))
+              (is (= (tv/get (second vs) :name) "v3")))
             (let [vs (seq (tv/connected-out-vertices v1 :fifth-label-r))]
               (is (= (count vs) 2))
-              (is (= (tv/get (first vs) :name)) "v3")
-              (is (= (tv/get (second vs) :name)) "v2")))))
+              (is (= (tv/get (first vs) :name) "v3"))
+              (is (= (tv/get (second vs) :name) "v2"))))))
 
       ;; TODO
       ;; Test composite sort-key
