@@ -7,7 +7,7 @@
                  [commons-lang                       "2.5"]
                  [com.thinkaurelius.titan/titan-core "0.4.4" :exclusions [commons-lang]]
                  [potemkin "0.2.0"]
-                 ;;[clojurewerkz/ogre "2.3.0.1"]
+                 [clojurewerkz/ogre "2.3.0.1"]
                  [clojurewerkz/archimedes "1.0.0-alpha6-SNAPSHOT"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
