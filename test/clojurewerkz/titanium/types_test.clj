@@ -219,14 +219,13 @@
             (te/connect! tx v1 :fifth-label v3)
             (te/connect! tx v1 :fifth-label-r v2)
             (te/connect! tx v1 :fifth-label-r v3)
+            ;; TODO @ray1729: is there a method we can call to return
+            ;; vertices sorted by the sort-key defined on the label? If
+            ;; so, we should add tests here.
             (let [vs (seq (tv/connected-out-vertices v1 :fifth-label))]
-              (is (= (count vs) 2))
-              (is (= (tv/get (first vs) :name) "v2"))
-              (is (= (tv/get (second vs) :name) "v3")))
+              (is (= (count vs) 2)))
             (let [vs (seq (tv/connected-out-vertices v1 :fifth-label-r))]
-              (is (= (count vs) 2))
-              (is (= (tv/get (first vs) :name) "v3"))
-              (is (= (tv/get (second vs) :name) "v2"))))))
+              (is (= (count vs) 2))))))
 
       ;; TODO
       ;; Test composite sort-key
