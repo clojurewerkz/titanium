@@ -17,7 +17,9 @@
            "storage.index.search.local-mode" true})
 
 (defn clear-db []
-  (FileUtils/deleteDirectory (io/file "/tmp/titanium-test")))
+  (Thread/sleep 1000)
+  (FileUtils/deleteDirectory (io/file "/tmp/titanium-test"))
+  (Thread/sleep 1000))
 
 (defn graph-fixture
   [f]
