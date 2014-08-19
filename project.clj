@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure                "1.5.1"]
                  [clojurewerkz/support               "0.15.0"]
                  [commons-lang                       "2.5"]
-                 [com.thinkaurelius.titan/titan-core "0.4.4" :exclusions [commons-lang]]
+                 [com.thinkaurelius.titan/titan-core "0.5.0" :exclusions [commons-lang]]
                  [potemkin "0.2.0"]
                  [clojurewerkz/archimedes "1.0.0-alpha6-SNAPSHOT"]]
   :source-paths  ["src/clojure"]
@@ -15,10 +15,12 @@
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              :master {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}
              :dev {
-                   :dependencies [[com.thinkaurelius.titan/titan-cassandra "0.4.4" :exclusions [commons-lang log4j]]
-                                  [com.thinkaurelius.titan/titan-berkeleyje "0.4.4"]
-                                  [com.thinkaurelius.titan/titan-es "0.4.4"]
+                   :dependencies [[com.thinkaurelius.titan/titan-cassandra "0.5.0" :exclusions [commons-lang log4j]]
+                                  [com.thinkaurelius.titan/titan-berkeleyje "0.5.0"]
+                                  [com.thinkaurelius.titan/titan-es "0.5.0"]
                                   [clojurewerkz/ogre "2.3.0.1"]
+                                  [org.slf4j/slf4j-nop "1.7.5"]
+                                  [me.raynes/fs "1.4.4"]
                                   [log4j "1.2.17"]]
                    :plugins [[codox "0.6.1"]]
                    :codox {:sources ["src/clojure"]

@@ -1,29 +1,37 @@
 (ns clojurewerkz.titanium.test.support
   (:require [clojure.java.io :as io]
-            [clojurewerkz.titanium.graph :as tg])
-  (:import (org.apache.commons.io FileUtils)))
+            [clojure.string :as str]
+            [clojurewerkz.titanium.graph :as tg]
+            [me.raynes.fs :as fs]))
 
 (def ^:dynamic *graph*)
 
-(def cs-dir (str (io/resource "test-cassandra.yaml")))
-
-(def conf {;; Embedded cassandra settings
-           "storage.backend"  "embeddedcassandra"
-           "storage.cassandra-config-dir" cs-dir
-           ;; Embedded elasticsearch settings
-           "storage.index.search.backend" "elasticsearch"
-           "storage.index.search.directory" "/tmp/cassandra/elasticsearch"
-           "storage.index.search.client-only" false
-           "storage.index.search.local-mode" true})
-
-(defn clear-db []
-  (Thread/sleep 1000)
-  (FileUtils/deleteDirectory (io/file "/tmp/titanium-test"))
-  (Thread/sleep 1000))
+(def config-template  (io/resource "test-cassandra.yaml"))
 
 (defn graph-fixture
   [f]
-  (clear-db)
-  (binding [*graph* (tg/open conf)]
-    (f)
-    (tg/shutdown *graph*)))
+  (let [tmp         (fs/temp-dir "titanium-test")
+        config-file (io/file tmp "test.yaml")
+        config      {;; Embedded cassandra settings
+                     "storage.backend"  "embeddedcassandra"
+                     "storage.conf-file" (.getPath config-file)
+                     ;; Embedded elasticsearch settings
+                     "storage.index.search.backend" "elasticsearch"
+                     "storage.index.search.directory" (.getPath (io/file tmp "elasticsearch"))
+                     "storage.index.search.client-only" false
+                     "storage.index.search.local-mode" true}]
+    (spit config-file
+          (-> (slurp config-template) (str/replace "/tmp/titanium-test" (.getPath tmp))))
+    (Thread/sleep 5000)
+    (binding [*graph* (tg/open config)]
+      (f)
+      (tg/shutdown *graph*))
+    (fs/delete-dir tmp)))
+
+;; (defn graph-fixture
+;;   [f]
+;;   (let [tmp (fs/temp-dir "titanium-test")]
+;;     (binding [*graph* (tg/open tmp)]
+;;       (f)
+;;       (tg/shutdown *graph*))
+;;     (fs/delete-dir tmp)))

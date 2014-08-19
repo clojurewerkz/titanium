@@ -42,8 +42,8 @@
 
 (extend-protocol TitaniumGraph
   String
-  (open [^String path]
-    (TitanFactory/open path))
+  (open [^String shortcut-or-file]
+    (TitanFactory/open shortcut-or-file))
 
   java.io.File
   (open [^java.io.File f]
