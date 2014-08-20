@@ -8,12 +8,12 @@
 ;; You must not remove this notice, or any other, from this software.
 
 (ns clojurewerkz.titanium.schema
-  (:import [com.thinkaurelius.titan.core.schema TitanManagementSystem
+  (:import [com.thinkaurelius.titan.core.schema TitanManagement
                                                 EdgeLabelMaker
                                                 VertexLabelMaker
                                                 PropertyKeyMaker]
-           [com.thinkaurelius.titan.core TitanGraph Multiplicity Cardinality Order]
-           [com.tinkerpop.blueprints Direction]))
+           [com.thinkaurelius.titan.core TitanGraph Multiplicity Cardinality Order RelationType]
+           [com.tinkerpop.blueprints Direction Edge Vertex]))
 
 (defn- ensure-collection
   "If `x` is a collecion, return that, otherwise return a single-element list
@@ -25,9 +25,8 @@
   [^TitanGraph graph f & {:keys [rollback?]}]
   (let [mgmt (.getManagementSystem graph)]
     (try
-      (let [result (f mgmt)]
-        (.commit mgmt)
-        result)
+      (f mgmt)
+      (if rollback? (.rollback mgmt) (.commit mgmt))
       (catch Throwable t
         (try (when (.isOpen mgmt) (.rollback mgmt)) (catch Exception _))
         (throw t)))))
@@ -36,23 +35,23 @@
   [binding & body]
   `(with-management-system*
      ~(second binding)
-     (^{:once true} fn* [(~(first binding))] ~@body)
+     (^{:once true} fn* [~(first binding)] ~@body)
      ~@(rest (rest binding))))
 
 (defn get-relation-type
-  [^TitanManagementSystem mgmt tname]
-  (.getRelationType ms (name tname)))
+  [^TitanManagement mgmt tname]
+  (.getRelationType mgmt (name tname)))
 
 (defn get-edge-label
-  [^TitanManagementSystem mgmt tname]
+  [^TitanManagement mgmt tname]
   (.getEdgeLabel mgmt (name tname)))
 
 (defn get-vertex-label
-  [^TitanManagementSystem mgmt tname]
+  [^TitanManagement mgmt tname]
   (.getVertexLabel mgmt (name tname)))
 
 (defn get-property-key
-  [^TitanManagementSystem mgmt tname]
+  [^TitanManagement mgmt tname]
   (.getPropertyKey mgmt (name tname)))
 
 (defn keyword->multiplicity
@@ -113,9 +112,8 @@
      RelationTypes used in the signature must be either property
      out-unique keys or out-unique unidirected edge labels."
 
-  [^TitanManagementSystem mgmt
-   tname {:keys [unidirected? multiplicity signature]
-          :or {unidirected? false multiplitiy :multi}}]
+  [^TitanManagement mgmt tname & {:keys [unidirected? multiplicity signature]
+                                  :or {unidirected? false multiplicity :multi}}]
   (let [^EdgeLabelMaker maker (.makeEdgeLabel mgmt (name tname))]
     (.multiplicity maker (keyword->multiplicity multiplicity))
     (when unidirected?
@@ -141,7 +139,7 @@
      Makes this vertex label static, which means that vertices of this
      label cannot be modified outside of the transaction in which they
      were created."
-  [^TitanManagementSystem mgmt tname & {:keys [partition? static?]}]
+  [^TitanManagement mgmt tname & {:keys [partition? static?]}]
   (let [^VertexLabelMaker maker (.makeVertexLabel mgmt (name tname))]
     (when partition? (.partition maker))
     (when static? (.setStatic maker))
@@ -175,8 +173,8 @@
      have an incident property or unidirected edge of the type included
      in the signature. This allows the graph database to store such
      relations more compactly and retrieve them more quickly."
-  [^TitanManagementSystem mgmt tname data-type & {:keys [cardinality signature]
-                                                  :or {cardinality :single}}]
+  [^TitanManagement mgmt tname data-type & {:keys [cardinality signature]
+                                            :or {cardinality :single}}]
   (let [^PropertyKeyMaker maker (.makePropertyKey mgmt (name tname))]
     (.dataType maker data-type)
     (.cardinality maker (keyword->cardinality cardinality))
@@ -198,15 +196,74 @@
     :asc  Order/ASC
     :desc Order/DESC))
 
+(defn keyword->element-type
+  [kw]
+  (case kw
+    :edge   Edge
+    :vertex Vertex))
+
+(defn- index-builder
+  "Helper function providing common functionality for `build-composite-index`
+   and `build-mixed-index`."
+  [^TitanManagement mgmt index-name element-type keys index-only]
+  (let [builder (.buildIndex mgmt (name index-name) (keyword->element-type element-type))]
+    (doseq [k (ensure-collection keys)]
+      (if-let [property (get-property-key mgmt k)]
+        (.addKey builder property)
+        (throw (Exception. (format "Property key %s not defined" k)))))
+    (when index-only
+      (if-let [relation-type (case element-type
+                               :edge (get-edge-label mgmt index-only)
+                               :vertex (get-vertex-label mgmt index-only))]
+        (.indexOnly builder relation-type)
+        (throw (Exception. (format "Relation type %s not defined" index-only)))))
+    builder))
+
+(defn build-composite-index
+  "Composite indices retrieve vertices or edges by one or a (fixed)
+   composition of multiple keys. `element-type` (:edge or :vertex) determines
+   whether this index is for edges or vertices, and `keys` specifies the property
+   keys for this index.
+
+   Options:
+
+     :unique = true | false (default)
+
+     Makes this index unique for the specified element-type.
+
+    :index-only = schemaType
+
+    Restricts this index to only those elements that have the provided
+    schemaType. If this graph index indexes vertices, then the argument
+    is expected to be a vertex label and only vertices with that label
+    will be indexed. Likewise, for edges and properties only those with
+    the matching relation type will be indexed."
+  [^TitanManagement mgmt index-name element-type keys & {:keys [unique? index-only]}]
+  (let [builder (index-builder mgmt index-name element-type keys index-only)]
+    (when unique? (.unique builder))
+    (.buildCompositeIndex builder)))
+
+(defn build-mixed-index
+  "Mixed indices retrieve vertices or edges by any combination of
+   previously added property keys. Mixed indexes provide more flexibility
+   than composite indexes and support additional condition predicates
+   beyond equality.  `element-type` (:edge or :vertex) determines
+   whether this index is for edges or vertices, and `keys` specifies the property
+   keys for this index. Mixed indices require an indexing backend to be configured;
+   this is uniquely identified by `backend-name`."
+  [^TitanManagement mgmt index-name element-type keys backend-name & {:keys [index-only]}]
+  (let [builder (index-builder mgmt index-name element-type keys index-only)]
+    (.buildMixedIndex builder backend-name)))
+
 (defn build-edge-index
-  "Creates a RelationTypeIndex for the specified edge label, i.e. all
+  "Creates a vertex-centric index for the specified edge label, i.e. all
    edges of that label will be indexed according to this index
    definition which will speed up certain vertex-centric queries.  An
    index is defined by its name, the direction in which the index should
    be created (:in, :out or :both), the sort order (:asc or :desc) and -
    most importantly - the sort keys that define the index key."
-  [^TitanManagementSystem mgmt index-name label-name direction sort-keys
-   & {:keys [order] :or {order :asc}}]
+  [^TitanManagement mgmt index-name label-name direction sort-keys  & {:keys [order]
+                                                                       :or {order :asc}}]
   (if-let [label (get-edge-label mgmt label-name)]
     (.buildEdgeIndex mgmt
                      label
@@ -218,13 +275,13 @@
     (throw (Exception. (format "Label %s not defined" label-name)))))
 
 (defn build-property-index
-  "Creates a RelationTypeIndex for the provided property key, i.e. all
-   properties of that key will be indexed according to this index
-   definition which will speed up certain vertex-centric queries. An
-   index is defined by its name, the sort order and - most importantly -
-   the sort keys that define the index key."
-  [^TitanManagementSystem mgmt index-name property-name sort-keys
-   & {:keys [order] :or {order :asc}}]
+  "Creates a vertex-centric index for the provided property key,
+   i.e. all properties of that key will be indexed according to this
+   index definition which will speed up certain vertex-centric
+   queries. An index is defined by its name, the sort order and - most
+   importantly - the sort keys that define the index key."
+  [^TitanManagement mgmt index-name property-name sort-keys & {:keys [order]
+                                                               :or {order :asc}}]
   (if-let [property (get-property-key mgmt property-name)]
     (.buildPropertyIndex mgmt
                          property

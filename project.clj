@@ -3,9 +3,8 @@
   :url "http://titanium.clojurewerkz.org"
   :license {:name "Eclipse Public License"}
   :dependencies [[org.clojure/clojure                "1.5.1"]
-                 [clojurewerkz/support               "0.15.0"]
-                 [commons-lang                       "2.5"]
-                 [com.thinkaurelius.titan/titan-core "0.5.0" :exclusions [commons-lang]]
+                 [clojurewerkz/support               "0.15.0" :exclusions [com.google.guava/guava]]
+                 [com.thinkaurelius.titan/titan-core "0.5.0"]
                  [potemkin "0.2.0"]
                  [clojurewerkz/archimedes "1.0.0-alpha6-SNAPSHOT"]]
   :source-paths  ["src/clojure"]
@@ -14,8 +13,7 @@
   :profiles {:1.4 {:dependencies [[org.clojure/clojure "1.4.0"]]}
              :1.6 {:dependencies [[org.clojure/clojure "1.6.0"]]}
              :master {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}
-             :dev {
-                   :dependencies [[com.thinkaurelius.titan/titan-cassandra "0.5.0" :exclusions [commons-lang log4j]]
+             :dev {:dependencies [[com.thinkaurelius.titan/titan-cassandra "0.5.0" :exclusions [org.slf4j/slf4j-log4j12]]
                                   [com.thinkaurelius.titan/titan-berkeleyje "0.5.0"]
                                   [com.thinkaurelius.titan/titan-es "0.5.0"]
                                   [clojurewerkz/ogre "2.3.0.1"]
