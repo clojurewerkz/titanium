@@ -2,7 +2,7 @@
   (:require [clojurewerkz.titanium.graph    :as tg]
             [clojurewerkz.titanium.vertices :as tv]
             [clojurewerkz.titanium.edges    :as ted]
-            [clojurewerkz.titanium.types    :as tt])
+            [clojurewerkz.titanium.schema   :as ts])
   (:use clojure.test
         [clojurewerkz.titanium.test.support :only (*graph* graph-fixture)])
   (:import (com.thinkaurelius.titan.graphdb.vertices StandardVertex)))
@@ -10,11 +10,15 @@
 (use-fixtures :once graph-fixture)
 
 (deftest vertex-test
-  (tg/with-transaction [tx *graph*]
-    (tt/defkey-once tx :vname      String {:vertex-index true})
-    (tt/defkey-once tx :age        Long   {:vertex-index true})
-    (tt/defkey-once tx :first-name String {:vertex-index true})
-    (tt/defkey-once tx :last-name  String {:vertex-index true}))
+  (ts/with-management-system [mgmt *graph*]
+    (ts/make-property-key mgmt :vname      String)
+    (ts/make-property-key mgmt :age        Long)
+    (ts/make-property-key mgmt :first-name String)
+    (ts/make-property-key mgmt :last-name  String)
+    (ts/build-composite-index mgmt "vname-ix" :vertex [:vname] :unique? true)
+    (ts/build-composite-index mgmt "age-ix" :vertex [:age])
+    (ts/build-composite-index mgmt "first-name-ix" :vertex [:first-name])
+    (ts/build-composite-index mgmt "last-name-ix" :vertex [:last-name]))
 
   (testing "Adding a vertex."
     (tg/with-transaction [tx *graph*]
