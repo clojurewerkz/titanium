@@ -4,8 +4,7 @@
             [clojurewerkz.titanium.edges    :as ted]
             [ogre.core :as g])
   (:use clojure.test
-        [clojurewerkz.titanium.test.support :only (*graph* graph-fixture)])
-  (:import java.io.File))
+        [clojurewerkz.titanium.test.support :only (*graph* graph-fixture)]))
 
 (use-fixtures :once graph-fixture)
 
@@ -50,13 +49,13 @@
                         (g/property :name)
                         g/into-set!)
             r3 (g/query hercules
-                        (g/--E> [:battled])
+                        (g/-E> [:battled])
                         (g/has :times > 1)
                         (g/in-vertex)
                         (g/property :name)
                         g/into-set!)
             c3 (g/query hercules
-                        (g/--E> [:battled])
+                        (g/-E> [:battled])
                         (g/has :times > 1)
                         (g/in-vertex)
                         g/count!)
