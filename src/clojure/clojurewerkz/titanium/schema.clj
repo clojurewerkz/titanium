@@ -94,11 +94,6 @@
      A :one-to-one label allows at most one outgoing and one incoming
      edge of this label for each vertex in the graph
 
-     When a :one-to-many, :many-to-one or :one-to-one cardinality is specified,
-     we default to using locking to ensure the uniqueness constraint. You can
-     override this by specifying `:unique-locked? false`, in which case concurrent
-     transactions may overwrite existing uniqueness constraints.
-
      :signature = type-name | [type-name ...]
 
      Specifying the signature of a type tells the graph database to
