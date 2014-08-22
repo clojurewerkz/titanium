@@ -203,4 +203,16 @@
               (tv/get (tv/refresh tx v1-a) :age)
               (tv/get (tv/refresh tx v1-b) :age)))
        (is (thrown-with-msg? Throwable #"There were 2 vertices returned."
-                             (tv/unique-upsert! tx :last-name {:last-name "Maril"})))))))
+                             (tv/unique-upsert! tx :last-name {:last-name "Maril"}))))))
+
+  (testing "Add vertex with label"
+    (ts/with-management-system [mgmt *graph*]
+      (ts/make-vertex-label mgmt "Foo"))
+    (tg/with-transaction [tx *graph*]
+      (let [v1 (tv/create-with-label! tx "Foo")]
+        (is (.getId v1))
+        (is (= "Foo" (.getLabel v1))))
+      (let [v2 (tv/create-with-label! tx "Foo" {:first-name "Zack"})]
+        (is (.getId v2))
+        (is (= "Foo" (.getLabel v2)))
+        (is (= "Zack" (.getProperty v2 "first-name")))))))

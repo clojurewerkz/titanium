@@ -12,7 +12,8 @@
   (:refer-clojure :exclude [keys vals assoc! dissoc! get find])
   (:require [potemkin :as po]
             [clojurewerkz.archimedes.vertex :as vertex]
-            [clojurewerkz.titanium.elements :as elem]))
+            [clojurewerkz.titanium.elements :as elem])
+  (:import [com.thinkaurelius.titan.core TitanGraph]))
 
 ;;Titan elements
 (po/import-fn elem/new?)
@@ -59,3 +60,11 @@
 (po/import-fn vertex/create!)
 (po/import-fn vertex/upsert!)
 (po/import-fn vertex/unique-upsert!)
+
+(defn create-with-label!
+  "Create a vertex with the specified label and optional property map."
+  ([g label]
+     (create-with-label! g label {}))
+  ([^TitanGraph g ^String label m]
+     (let [^Vertex new-vertex (.addVertexWithLabel g label)]
+       (merge! new-vertex m))))
