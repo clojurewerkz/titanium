@@ -47,9 +47,9 @@
       (is (ts/make-edge-label mgmt :brother :multiplicity :many-to-many))
       (is (ts/make-edge-label mgmt :pet     :multiplicity :one-to-many))
       (is (ts/make-edge-label mgmt :battled :multiplicity :many-to-many))
-      (is (ts/build-composite-index mgmt :name-ix :vertex [:name] :unique? true))
-      (is (ts/build-composite-index mgmt :type-ix :vertex [:type]))
-      (is (ts/build-composite-index mgmt :times-ix :edge [:times]))))
+      (is (ts/build-composite-index mgmt :ixName :vertex [:name] :unique? true))
+      (is (ts/build-composite-index mgmt :ixType :vertex [:type]))
+      (is (ts/build-composite-index mgmt :ixTimes :edge [:times]))))
 
   (testing "Populate graph"
     (is

@@ -15,10 +15,10 @@
     (ts/make-property-key mgmt :age        Long)
     (ts/make-property-key mgmt :first-name String)
     (ts/make-property-key mgmt :last-name  String)
-    (ts/build-composite-index mgmt "vname-ix" :vertex [:vname] :unique? true)
-    (ts/build-composite-index mgmt "age-ix" :vertex [:age])
-    (ts/build-composite-index mgmt "first-name-ix" :vertex [:first-name])
-    (ts/build-composite-index mgmt "last-name-ix" :vertex [:last-name]))
+    (ts/build-composite-index mgmt "ixVname" :vertex [:vname] :unique? true)
+    (ts/build-composite-index mgmt "ixAge" :vertex [:age])
+    (ts/build-composite-index mgmt "ixFirstName" :vertex [:first-name])
+    (ts/build-composite-index mgmt "ixLastName" :vertex [:last-name]))
 
   (testing "Adding a vertex."
     (tg/with-transaction [tx *graph*]

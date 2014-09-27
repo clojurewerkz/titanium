@@ -213,7 +213,15 @@
           (is (= ix-name (.getName ix)))
           (is (not (.isCompositeIndex ix)))
           (is (.isMixedIndex ix))
-          (is (not (.isUnique ix))))))))
+          (is (not (.isUnique ix)))))))
+
+  (testing "Invalid index name throws exception"
+    (ts/with-management-system [mgmt *graph*]
+      (let [k-name (next-name)]
+        (ts/make-property-key mgmt k-name String)
+        (is (thrown-with-msg? java.lang.IllegalArgumentException
+                              #"Invalid index name"
+                              (ts/build-mixed-index mgmt "some-index" :vertex [k-name] "search")))))))
 
 ;; TODO: Tests for make-edge-label with signature
 

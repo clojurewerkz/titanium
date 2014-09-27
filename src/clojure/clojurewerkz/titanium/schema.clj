@@ -197,10 +197,21 @@
     :edge   Edge
     :vertex Vertex))
 
+(defn assert-valid-index-name
+  "Index names contaning non-alphanumeric characters are accepted by
+   Titan but do not seem to work properly. We catch this early by adding
+   an assertion on index creation."
+  [index-name]
+  (when-not (re-matches #"[a-zA-Z][a-zA-Z0-9]*" (name index-name))
+    (throw (IllegalArgumentException.
+            (format "Invalid index name: %s (should contain only alphanumeric characters"
+                    (name index-name))))))
+
 (defn- index-builder
   "Helper function providing common functionality for `build-composite-index`
    and `build-mixed-index`."
   [^TitanManagement mgmt index-name element-type keys index-only]
+  (assert-valid-index-name index-name)
   (let [builder (.buildIndex mgmt (name index-name) (keyword->element-type element-type))]
     (doseq [k (ensure-collection keys)]
       (if-let [property (get-property-key mgmt k)]
