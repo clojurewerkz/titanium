@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure                "1.5.1"]
                  [com.thinkaurelius.titan/titan-core "0.5.0"]
                  [potemkin "0.3.8"]
-                 [clojurewerkz/archimedes "1.0.0-alpha6-SNAPSHOT"]]
+                 [clojurewerkz/archimedes "2.5.0.0"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
