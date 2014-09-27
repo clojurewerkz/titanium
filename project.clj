@@ -16,7 +16,7 @@
                                   [com.thinkaurelius.titan/titan-berkeleyje "0.5.0"]
                                   [com.thinkaurelius.titan/titan-es "0.5.0"]
                                   [clojurewerkz/ogre "2.5.0.0"]
-                                  [clojurewerkz/support "1.0.0" :exclusions [com.google.guava/guava
+                                  [clojurewerkz/support "1.1.0" :exclusions [com.google.guava/guava
                                                                              org.clojure/clojure]]
 
                                   [org.slf4j/slf4j-nop "1.7.5"]
