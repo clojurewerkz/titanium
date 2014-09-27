@@ -2,7 +2,7 @@
   (:require [clojurewerkz.titanium.graph    :as tg]
             [clojurewerkz.titanium.vertices :as tv]
             [clojurewerkz.titanium.edges    :as ted]
-            [ogre.core :as g])
+            [clojurewerkz.ogre.core :as g])
   (:use clojure.test
         [clojurewerkz.titanium.test.support :only (*graph* graph-fixture)]))
 
