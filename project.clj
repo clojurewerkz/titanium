@@ -10,6 +10,7 @@
   :java-source-paths ["src/java"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
   :profiles {:1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
+             :1.7    {:dependencies [[org.clojure/clojure "1.7.0-alpha4"]]}
              :master {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}
              :dev {:dependencies [[com.thinkaurelius.titan/titan-cassandra "0.5.0" :exclusions [org.slf4j/slf4j-log4j12]]
                                   [com.thinkaurelius.titan/titan-berkeleyje "0.5.0"]
@@ -23,7 +24,7 @@
                    :plugins [[codox "0.6.1"]]
                    :codox {:sources ["src/clojure"]
                            :output-dir "doc/api"}}}
-  :aliases {"all" ["with-profile" "dev,dev,1.5:dev,master"]}
+  :aliases {"all" ["with-profile" "dev,dev,1.5:dev,1.7:dev,master"]}
   :repositories {"sonatype" {:url "http://oss.sonatype.org/content/repositories/releases"
                              :snapshots false
                              :releases {:checksum :fail}}
