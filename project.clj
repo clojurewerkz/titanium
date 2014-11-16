@@ -21,7 +21,7 @@
 
                                   [org.slf4j/slf4j-nop "1.7.5"]
                                   [commons-io/commons-io "2.4"]]
-                   :plugins [[codox "0.6.1"]]
+                   :plugins [[codox "0.8.10"]]
                    :codox {:sources ["src/clojure"]
                            :output-dir "doc/api"}}}
   :aliases {"all" ["with-profile" "dev,dev,1.5:dev,1.7:dev,master"]}
