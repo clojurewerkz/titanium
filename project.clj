@@ -11,7 +11,7 @@
   :javac-options     ["-target" "1.6" "-source" "1.6"]
   :profiles {:1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.7    {:dependencies [[org.clojure/clojure "1.7.0"]]}
-             :master {:dependencies [[org.clojure/clojure "1.7.0-master-SNAPSHOT"]]}
+             :master {:dependencies [[org.clojure/clojure "1.8.0-master-SNAPSHOT"]]}
              :dev {:dependencies [[com.thinkaurelius.titan/titan-cassandra "0.5.0" :exclusions [org.slf4j/slf4j-log4j12]]
                                   [com.thinkaurelius.titan/titan-berkeleyje "0.5.0"]
                                   [com.thinkaurelius.titan/titan-es "0.5.0"]
