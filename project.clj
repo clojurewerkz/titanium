@@ -8,6 +8,7 @@
                  [clojurewerkz/archimedes            "2.5.0.0"]]
   :source-paths  ["src/clojure"]
   :java-source-paths ["src/java"]
+  :test-paths ["test/clojurewerkz/titanium"]
   :javac-options     ["-target" "1.6" "-source" "1.6"]
   :profiles {:1.5 {:dependencies [[org.clojure/clojure "1.5.1"]]}
              :1.7    {:dependencies [[org.clojure/clojure "1.7.0"]]}
